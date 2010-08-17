@@ -21,12 +21,12 @@ The project in its current state needs some additional jars added to classpath i
 A Database server is needed as well.
 For now just PostgreSQL is supported. (more may follow)
 
-- JDOM (http://www.jdom.org/)
+- [JDOM]: http://www.jdom.org/
 - jaxen (usualy shipped with JDOM)
-- PostGreSQL Connector for JDBC (http://jdbc.postgresql.org/download.html)
-- PostGreSQL Database Server (http://www.postgressql.org/)
-- Beanshell (http://www.beanshell.org/)
-- WebHarvest (http://web-harvest.sourceforge.net/)
+- [PostGreSQL Connector for JDBC]: http://jdbc.postgresql.org/download.html
+- [PostGreSQL Database Server]: http://www.postgressql.org/
+- [Beanshell]: http://www.beanshell.org/
+- [WebHarvest]: http://web-harvest.sourceforge.net/)
 
 Limits
 ======
