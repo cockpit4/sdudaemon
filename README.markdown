@@ -7,7 +7,7 @@ This is a Webscraping project. Other solutions found lags features this project 
 - Database management : updates data in the database
 
 Main purpose of this project is harvesting of textual information from websites.
-There is an example project showing the the advances and the usage this project should provide.
+There is an example project showing the features this project provides.
 
 Use case(s)
 ===========
