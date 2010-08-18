@@ -1,6 +1,6 @@
 Description
 ===========
-This is a Webscraping project. Other solutions found lags features this project combines.
+This is a Webscraping project. Other solutions found lag features this project combines.
 
 - Scraping Framework  : contains everything necessary to download picture and text information.
 - Data adaption       : scripting engine adapting data to fit in a relational database
