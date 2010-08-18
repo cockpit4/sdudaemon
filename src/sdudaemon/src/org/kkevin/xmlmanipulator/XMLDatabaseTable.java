@@ -1,0 +1,374 @@
+package org.kkevin.xmlmanipulator;
+
+import java.security.NoSuchAlgorithmException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.jdom.Document;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.security.MessageDigest;
+import java.util.List;
+import org.jdom.Attribute;
+import org.jdom.Element;
+import org.jdom.JDOMException;
+import org.jdom.xpath.XPath;
+
+/** This class provides the functionality to create updater compatible XML Tables easily. 
+ * @category WebScraper
+ * @package org.kkevin.sdudaemon
+ * @subpackage org.kkevin.sdudaemon.execute
+ * @author kneo
+ * @copyright 2010 cockpit4 rights reserved.
+ * @version SVN $Id$
+ */
+public final class XMLDatabaseTable{
+	private XMLManipulator xm;
+	private String name;
+	private String db;
+	/**Constructor creating a new empty XML-Database Table
+	 * @param db name of the target database
+	 * @param name name of the table
+	 */
+	public XMLDatabaseTable(String name, String db) throws Exception{
+		this.db = db;
+		this.name = name;
+		xm = new XMLManipulator("");
+		xm.addXPathNode("/table[@name=\'"+name+"\'][@database=\'"+db+"\']", "");
+		xm.addXPathNode("/table[@name=\'"+name+"\'][@database=\'"+db+"\']/head", "");
+		xm.addXPathNode("/table[@name=\'"+name+"\'][@database=\'"+db+"\']/body", "");
+	}
+
+	/**Constructor creates a new object based on an existing filename
+	 * @param filename file to load
+	 */
+	public XMLDatabaseTable(String filename) throws IOException, Exception{
+		loadFile(filename);
+
+
+		Object res = XPath.selectSingleNode(getDocument(), "/table");
+
+		name = ((Element) res).getAttributeValue("name");
+		db   = ((Element) res).getAttributeValue("database");
+	}
+	//creates a new table column labeled "name" of type "type" if it exists this method does nothing
+	public void addColumn(String name,String type) throws JDOMException{
+		if(!xm.nodeExists("/table/head/column[@name=\'"+name+"\']")){
+			xm.addXPathNode("/table/head/column[@name=\'"+name+"\'][@type=\'"+type+"\']","");
+		}
+	}
+
+	/**creates a non-existent row value, or updates it if it exists
+	 * a none existend column will also be added to the table head.
+	 * @param id of the data row
+	 * @param column which to assign value
+	 * @param value to assign
+	 */
+	public void insertValue(int id,XMLDataColumn column, String value) throws JDOMException, Exception{
+		//exists the column ? no => throw exception
+		//does the row id not exists create a new row
+		//does the row exist insert a new one
+
+		if( xm.nodeExists("/table/body/row[@id=\'"+id+"\']/column[@name=\'"+column.name+"\']")  ){
+			//node Exists
+			xm.setXPathValue("/table/body/row[@id=\'"+id+"\']/column[@name=\'"+column.name+"\']", value);
+		}
+		else{
+			//subtree none existend ... so add it ...
+			if(xm.nodeExists("/table/head/column[@name=\'"+column.name+"\']")){
+				xm.addXPathNode("/table/body/row[@id=\'"+id+"\']/column[@name=\'"+column.name+"\']", value);
+			}
+			else{
+				addColumn(column.name,column.type);
+				xm.addXPathNode("/table/body/row[@id=\'"+id+"\']/column[@name=\'"+column.name+"\']", value);
+			}
+		}
+	}
+
+	/**This will insert a row into the XML database
+	 * @param dat XMLDataRow containing data you want to store
+	 */
+
+	public void insertValue(XMLDataRow dat) throws JDOMException, Exception{
+		//exists the column ? no => throw exception
+		//does the row id not exists create a new row
+		//does the row exist insert a new one
+		if(dat!=null){
+			if(dat.columnsNames.length == dat.values.length){
+				for(int i = 0 ; i<dat.columnsNames.length;i++){
+					insertValue(dat.id,dat.columnsNames[i],dat.values[i]);
+				}
+			}
+		}
+	}
+
+	/**Inserts value an amount of XMLDataRow's into the XML database
+	 * @param rows
+	 */
+	public void insertValues(XMLDataRow[] rows) throws Exception{
+		for(XMLDataRow row : rows){
+			if(row.columnsNames.length == row.values.length){
+				for(int i = 0 ; i<row.columnsNames.length; i++){
+					insertValue(row.id,row.columnsNames[i],row.values[i]);
+				}
+			}
+		}
+	}
+
+	/**determines whether the table holds a column labeled "name" or not
+	 * @param name column to test
+	 * @return true if column exists
+	 */
+	public boolean hasColumn(String name) throws JDOMException{
+		return (XPath.selectSingleNode(getDocument(),"/table/head/column[@name=\'"+name+"\']") != null);
+	}
+
+	/**Check if a row if given id exists
+	 * @param id of the row in the XML database
+	 * @return true if database keeps an row with given id
+	 */
+	public boolean hasRow(int id) throws JDOMException{
+		return xm.nodeExists("/table/body/row[@id=\'"+id+"\']");
+	}
+	/**Checks if a column of a given id is set. <b>not implemented yet</b>
+	 * @param id of the row to check
+	 * @param column checking for keeping data
+	 * @return true if column at id is not empty
+	 */
+	public boolean isSet(int id, String column){
+		return false;
+	}
+	/**Returns the database name of the XML Database
+	 * @return name of the database
+	 */
+	public String getDatabaseName(){
+		return db;
+	}
+
+	/**Returns the name of the table
+	 * @return name of the table
+	 */
+	public String getTableName(){
+		return name;
+	}
+
+	/**Returns an array containing structures describing a database column
+	 * @return all columns as XMLDataColumn array
+	 */
+	public XMLDataColumn[] getXMLDataColumns() throws JDOMException{
+		List columns = XPath.selectNodes(getDocument(), "/table/head/column"); //load head columns
+
+		//System.out.println(" COLUMNS : "+columns.size());
+
+		XMLDataColumn[] result = new XMLDataColumn[columns.size()]; //create a new array keeping the result
+
+		for(int i = 0 ; i<columns.size(); i++){ //iterate through and assing each name to its type
+			String name = ((Element) columns.get(i)).getAttributeValue("name");
+			String type = ((Element) columns.get(i)).getAttributeValue("type");
+			
+			result[i] = new XMLDataColumn(name,type); //Create a new data column
+		}
+
+		return result; //return the final array
+	}
+	/**Returns all columns as String array
+	 * @return String array of all column names. This does not contain type definition see getXMLDataColumns instead.
+	 */
+	public String[] getColumns() throws JDOMException{
+		List res = XPath.selectNodes(xm.getDocument(), "/table/head/column/@name");
+
+		String[] list = new String[res.size()];
+
+		for(int a = 0 ; a < res.size(); a++){
+			list[a] = ((Attribute) res.get(a)).getValue();
+			//System.out.println("Column : "+list[a]);
+		}
+		return list;
+	}
+	//finds and returns an existing column hidden in a XMLDataColumn set
+	//returns the element if it was found, null otherwise.
+	private XMLDataColumn findColumn(XMLDataColumn[] columnSet, String column){
+
+		for(XMLDataColumn a : columnSet){
+			if(a.name.equals(column)){
+				return a;
+			}
+		}
+		return null;
+	}
+	/**Returns the data in a XMLDataRow array
+	 * @return array of all data
+	 */
+	public XMLDataRow[] getData() throws JDOMException{
+		List rows                 = XPath.selectNodes(getDocument(), "/table/body/row"); //load each data row
+		List head                 = XPath.selectNodes(getDocument(), "/table/head/column"); //load head to assign correct columns and data types
+		XMLDataColumn[] columnSet = new XMLDataColumn[head.size()];
+
+		int i = 0;
+		for(Object column : head){
+			String name  = ((Element) column).getAttributeValue("name");
+			String type  = ((Element) column).getAttributeValue("type");
+			columnSet[i] = new XMLDataColumn(name,type);
+			i++;
+		}
+
+		XMLDataRow[] result  = new XMLDataRow[rows.size()];
+
+		i=0;
+		
+		for(Object row : rows){ //dispatch each row
+			int id       = Integer.parseInt(((Element) row).getAttributeValue("id")); //ID of the dataset
+			List columns = XPath.selectNodes(getDocument(), "/table/body/row[@id=\'"+id+"\']/column"); //select column names and data
+
+			String[]        data        = new String[columns.size()];
+			XMLDataColumn[] datacolumns = new XMLDataColumn[columns.size()];
+
+			int j = 0;
+
+			for(Object column : columns){
+				String name    = ((Element) column).getAttributeValue("name");
+				data[j]        = ((Element) column).getText();
+				datacolumns[j] = findColumn(columnSet,name);
+				j++;
+			}
+			result[i] = new XMLDataRow(id,datacolumns,data);
+			i++;
+		}
+		return result;
+	}
+
+	/**returns the JDOM Document for this xml file
+	 * @return the JDOM Document of this database table
+	 */
+	public Document getDocument(){
+		return xm.getDocument();
+	}
+
+	//
+	//
+	/**finalize document, add hashes to rows and the table head
+	 *this makes it easy to detect changes among the rows and makes it easy to update data where necessary.
+	 * <b>not stable yet!</b>
+	 */
+	public void finalizeDocument(){ //TODO : make this deterministic
+		Document doc = xm.getDocument();
+		try {
+			List rows = XPath.selectNodes(doc, "/table/body");
+			MessageDigest md5 = MessageDigest.getInstance("MD5");
+			if(rows instanceof Element){
+				md5.reset();
+				for(Object row : rows){
+					List columns = XPath.selectNodes(rows, "/row/column");
+					StringBuilder hash = new StringBuilder(1000);
+					
+					for(Object column : columns){
+						hash.append(((Element) column).getAttributeValue("name"));
+					}
+					byte[] res = hash.toString().getBytes();
+
+					md5.update(res);
+					res = md5.digest();
+
+					String md = new String(res);
+
+					((Element) row).setAttribute("hash", md); //store the md5 hash for eah line
+				}
+			}
+		}
+		catch (NoSuchAlgorithmException ex){
+			Logger.getLogger(XMLDatabaseTable.class.getName()).log(Level.SEVERE, null, ex);
+		}
+		catch (JDOMException ex) {
+			Logger.getLogger(XMLDatabaseTable.class.getName()).log(Level.SEVERE, null, ex);
+		}
+	}
+
+	//Appents two XMLDatabaseTables
+	/**Appends a new Document to this one,
+	 */
+	public void append(XMLDatabaseTable tab) throws JDOMException, Exception{
+		//append head
+
+		XMLDataRow[] data = tab.getData();
+
+		//System.out.println(data[0].values[0]);
+
+		insertValues(data);
+	}
+	
+	//Check if a table exists.
+	/**Checks if a table exists.
+	 * @param file name to check
+	 * @return true if XML File exists
+	 */
+	public static boolean tableExists(String filename) throws IOException{
+		File check = new File(filename);
+		return (check.exists() && check.isFile());
+	}
+	//
+	/**Writes the content of this Document into a file
+	 * @param filename to write
+	 */
+	public void writeFile(String filename) throws IOException{
+		System.out.println("writing "+filename);
+
+		File out = new File(filename);
+
+		if(!out.exists()){
+			out.createNewFile();
+		}
+
+		if(out.exists() && out.isFile() && out.canRead()){
+			FileWriter fw = new FileWriter(out);
+
+
+
+			fw.write(xm.toString());
+			fw.close();
+		}
+		else{
+			//throw some exceptions here
+		}
+	}
+
+	/**load the xml file
+	 * @param filename and path to load
+	 */
+	public void loadFile(String filename) throws IOException,Exception{
+		File in = new File(filename);
+		
+		if(in.exists() && in.isFile() && in.canRead()){
+			xm = new XMLManipulator(XMLManipulator.readFileAsString(filename));
+		}
+		else{
+			throw new Exception("no such file!");
+		}
+	}
+	/**returns a String of the xml content of this XMLDatabaseTable
+	 */
+	@Override
+	public String toString(){
+		return xm.toString();
+	}
+	/**Standalone testing function
+	 */
+	public static void main(String[] argV) throws Exception{
+
+		XMLDatabaseTable td1 = new XMLDatabaseTable(argV[0]);
+		XMLDatabaseTable td2 = new XMLDatabaseTable(argV[1]);
+
+		//System.out.println(" DOCUMENT 1 : \n"+td1+"\n-----------------------");
+		//System.out.println(" DOCUMENT 2 : \n"+td1+"\n-----------------------");
+		try{
+			System.out.println("Appending ...");
+			td1.append(td2);
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+
+		td1.writeFile("test.xml");
+		//System.out.println(" RESULTING DOCUMENT : \n"+td1+"\n-----------------------");
+	}
+}
+

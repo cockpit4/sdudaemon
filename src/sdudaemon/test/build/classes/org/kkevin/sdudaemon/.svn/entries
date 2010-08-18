@@ -1,0 +1,77 @@
+10
+
+dir
+69
+https://svn.cockpit4.de/praktikum/kevin/trunk/src/sdudaemon/test/build/classes/org/kkevin/sdudaemon
+https://svn.cockpit4.de/praktikum
+
+
+
+2010-07-16T06:38:30.878598Z
+49
+kkruege
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+41979ee1-3631-4a46-af86-d30f098b4ee4
+
+update
+dir
+
+execute
+dir
+
+configuration
+dir
+
+Daemon.class
+file
+
+
+
+
+2010-07-15T08:01:42.000000Z
+aa6190f40694a342f118efd0d6e097d9
+2010-07-16T06:38:30.878598Z
+49
+kkruege
+has-props
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+3574
+
+threads
+dir
+
+harvest
+dir
+

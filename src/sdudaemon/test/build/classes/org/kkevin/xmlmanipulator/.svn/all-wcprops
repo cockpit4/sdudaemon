@@ -1,0 +1,77 @@
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/praktikum/!svn/ver/49/kevin/trunk/src/sdudaemon/test/build/classes/org/kkevin/xmlmanipulator
+END
+XMLManipulatorPlugin.class
+K 25
+svn:wc:ra_dav:version-url
+V 120
+/praktikum/!svn/ver/49/kevin/trunk/src/sdudaemon/test/build/classes/org/kkevin/xmlmanipulator/XMLManipulatorPlugin.class
+END
+RemovePlugin.class
+K 25
+svn:wc:ra_dav:version-url
+V 112
+/praktikum/!svn/ver/49/kevin/trunk/src/sdudaemon/test/build/classes/org/kkevin/xmlmanipulator/RemovePlugin.class
+END
+XMLManipulator.class
+K 25
+svn:wc:ra_dav:version-url
+V 114
+/praktikum/!svn/ver/49/kevin/trunk/src/sdudaemon/test/build/classes/org/kkevin/xmlmanipulator/XMLManipulator.class
+END
+XMLDatabaseTable.class
+K 25
+svn:wc:ra_dav:version-url
+V 116
+/praktikum/!svn/ver/49/kevin/trunk/src/sdudaemon/test/build/classes/org/kkevin/xmlmanipulator/XMLDatabaseTable.class
+END
+XPathDissembler.class
+K 25
+svn:wc:ra_dav:version-url
+V 115
+/praktikum/!svn/ver/49/kevin/trunk/src/sdudaemon/test/build/classes/org/kkevin/xmlmanipulator/XPathDissembler.class
+END
+XPathNodeAttribute.class
+K 25
+svn:wc:ra_dav:version-url
+V 118
+/praktikum/!svn/ver/49/kevin/trunk/src/sdudaemon/test/build/classes/org/kkevin/xmlmanipulator/XPathNodeAttribute.class
+END
+ChangeInfo.class
+K 25
+svn:wc:ra_dav:version-url
+V 110
+/praktikum/!svn/ver/49/kevin/trunk/src/sdudaemon/test/build/classes/org/kkevin/xmlmanipulator/ChangeInfo.class
+END
+AddPlugin.class
+K 25
+svn:wc:ra_dav:version-url
+V 109
+/praktikum/!svn/ver/49/kevin/trunk/src/sdudaemon/test/build/classes/org/kkevin/xmlmanipulator/AddPlugin.class
+END
+ElementPlugin.class
+K 25
+svn:wc:ra_dav:version-url
+V 113
+/praktikum/!svn/ver/49/kevin/trunk/src/sdudaemon/test/build/classes/org/kkevin/xmlmanipulator/ElementPlugin.class
+END
+makefile
+K 25
+svn:wc:ra_dav:version-url
+V 102
+/praktikum/!svn/ver/49/kevin/trunk/src/sdudaemon/test/build/classes/org/kkevin/xmlmanipulator/makefile
+END
+XMLContentPlugin.class
+K 25
+svn:wc:ra_dav:version-url
+V 116
+/praktikum/!svn/ver/49/kevin/trunk/src/sdudaemon/test/build/classes/org/kkevin/xmlmanipulator/XMLContentPlugin.class
+END
+XPathNode.class
+K 25
+svn:wc:ra_dav:version-url
+V 109
+/praktikum/!svn/ver/49/kevin/trunk/src/sdudaemon/test/build/classes/org/kkevin/xmlmanipulator/XPathNode.class
+END
