@@ -2,7 +2,7 @@ Description
 ===========
 This is a Webscraping project. Other solutions found lag features this project combines.
 
-- Scraping Framework  : contains everything necessary to download picture and text information.
+- Scraping Framework  : contains everything necessary to download picture and text information
 - Data adaption       : scripting engine adapting data to fit in a relational database
 - Database management : updates data in the database
 
@@ -18,7 +18,7 @@ Use case(s)
 Requirements
 ============
 The project in its current state needs some additional jars added to classpath in order to work properly.
-A Database server is needed as well.
+A database server is needed as well.
 For now just PostgreSQL is supported. (more may follow)
 
 - [JDOM]: http://www.jdom.org/
@@ -26,14 +26,14 @@ For now just PostgreSQL is supported. (more may follow)
 - [PostGreSQL Connector for JDBC]: http://jdbc.postgresql.org/download.html
 - [PostGreSQL Database Server]: http://www.postgressql.org/
 - [Beanshell]: http://www.beanshell.org/
-- [WebHarvest]: http://web-harvest.sourceforge.net/)
+- [WebHarvest]: http://web-harvest.sourceforge.net/
 
 Limits
 ======
 The early (pre pre pre alpha) version of this project has some limitations.
 
 - no data updating application simply drops tables and recreates them yet
-- limited multi threding (multiple projects run simultanous, not restricted to computer resources)
+- limited multi threading (multiple projects run simultanous, not restricted to computer resources)
 
 Known Issues
 ============
