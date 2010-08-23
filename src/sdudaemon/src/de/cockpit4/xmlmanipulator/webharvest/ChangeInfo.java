@@ -19,7 +19,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
  */
-package de.cockpit4.xmlmanipulator;
+package de.cockpit4.xmlmanipulator.webharvest;
 /**This class stores Metainformation for the manipulator plug in
   *
   * @author cockpit4 Gmbh, Kevin Krüger (kkruege@cockpit4.de)

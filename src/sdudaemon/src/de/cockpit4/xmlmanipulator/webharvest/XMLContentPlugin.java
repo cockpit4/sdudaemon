@@ -19,16 +19,13 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
  */
-package de.cockpit4.xmlmanipulator;
+package de.cockpit4.xmlmanipulator.webharvest;
 
 import org.webharvest.runtime.Scraper;
 import org.webharvest.runtime.ScraperContext;
 import org.webharvest.runtime.processors.WebHarvestPlugin;
 import org.webharvest.runtime.variables.Variable;
-import org.webharvest.runtime.variables.NodeVariable;
-/**This Class provides xml manipulating capabilities such as XML element changing and node addition. 
- * This changes are described within the body of the xml configuration tag of initializing this plugin.
- * See also ElementPlugin AddPlugin and RemovePlugin
+/**This Class returns an XML File to the XMLManipulator plugin
   *
   * @author cockpit4 Gmbh, Kevin Krüger (kkruege@cockpit4.de)
   * @version 1.0
@@ -36,22 +33,15 @@ import org.webharvest.runtime.variables.NodeVariable;
   *  Copyright (c) 2010 cockpit4 GmbH
   *  sdudeamon is released under the MIT license
   */
-public class XMLManipulatorPlugin extends WebHarvestPlugin{
-
-	private String body; //body between the tags
-	private String xpath;
-	private String value;
-	private XMLManipulator xm;
-
-	private java.util.List<ChangeInfo> changeList;
-
+public class XMLContentPlugin extends WebHarvestPlugin{
 	/**Returns the name of the control tag
 	*@return the name tag of this plug in
 	*/
 	public String getName() {
-		return "manipulate-xml";
+		return "xml-content";
 	}
-	/**Returns the the name of required attributes, since this plugin has none it returns an empty string array
+
+	/**Returns the the name of valid attributes, since this plugin has none it returns an empty string array
 	*@return empty string array
 	*/
 	public String[] getValidAttributes() {
@@ -63,17 +53,17 @@ public class XMLManipulatorPlugin extends WebHarvestPlugin{
 	public String[] getRequiredAttributes() {
 		return new String[] {};
 	}
-	/**Returns a list of valid subprocessors
-	*@return {"add","change","remove","xml-content"};
+	/**Returns a list of valid subprocessors since it does not matter what kind of Plugins were encapsuled withing this plugin null is return which means all processors can be applied.
+	*@return null;
 	*/
-	public String[] getValidSubprocessors() {
-		return new String[] {"add","change","remove","xml-content"};
+	public String[] getValidSubprocessors() { //all processors allowed
+		return null;
 	}
 	/**Returns a list of dependant subprocessors since this Plugins has none it returns null which means this plugin is completly independent on subprocessors
 	*@return null;
 	*/
 	public Class[] getDependantProcessors() { //indepedent plugin
-		return new Class[] {ElementPlugin.class,XMLContentPlugin.class,AddPlugin.class};
+		return null;
 	}
 	/** no Attributes so no suggestions
 	*@return null
@@ -94,50 +84,6 @@ public class XMLManipulatorPlugin extends WebHarvestPlugin{
 	*/
 	public Variable executePlugin(Scraper scraper, ScraperContext context){
 		// your code to execute plugin
-		//System.setProperty("java.class.path",System.getProperty("java.class.path")+";../lib/jdom.jar;../lib/jaxen-1.1.1.jar");
-		try{
-			body = executeBody(scraper,context).toString(); //execute body result needs to be XML, exception is thrown otherwise
-			xm = new XMLManipulator(body); // load xml into the Manipulator
-
-			//System.out.println("BODY:\n"+body+"\n changeList.length():"+changeList.size());
-
-			for(ChangeInfo c : changeList){
-				System.out.println(c);
-				switch(c.type){
-					case ChangeInfo.ACTION_ADD:
-						xm.addXPathNode(c.xpath,c.value);
-					break;
-
-					case ChangeInfo.ACTION_CHANGE:
-						//System.out.println(c+" CURRENT VALUE IS : "+xm.getXPathValue(c.xpath));
-						xm.setXPathValue(c.xpath,c.value); // set the path value throws Exception if invalid...
-					break;
-
-					case ChangeInfo.ACTION_REMOVE:
-						xm.removeXPathNode(c.xpath,c.value);
-					break;
-				}
-			}
-
-			String result = xm.toString();
-			//System.out.println("RESULT:\n"+result);
-			return new NodeVariable(result); //return manipulated XML Document (String);
-
-		}
-		catch(Exception e){
-			e.printStackTrace();
-		}
-		return null;
-	}
-	/**This method is called by the subprocessors in order to define the changes of an XML-Document.<br>
-	*The changes were added sequencially so the order of addition matters, to the XMLManipulator.<br>
-	*If you add an node then change or delete it meight work, if you remove it before you add it it will cause exceptions
-	*@param change to apply on the XML Document
-	*/
-	public void addChangeInfo(ChangeInfo change){
-		if(changeList == null){
-			changeList = new java.util.ArrayList<ChangeInfo>(); //create a new list if there no changes
-		}
-		changeList.add(change);// then add the change
+		return executeBody(scraper,context);
 	}
 }

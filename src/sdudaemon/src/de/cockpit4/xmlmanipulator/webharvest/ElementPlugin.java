@@ -19,7 +19,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
  */
-package de.cockpit4.xmlmanipulator;
+package de.cockpit4.xmlmanipulator.webharvest;
 
 import org.webharvest.runtime.Scraper;
 import org.webharvest.runtime.ScraperContext;
@@ -27,19 +27,15 @@ import org.webharvest.runtime.processors.WebHarvestPlugin;
 import org.webharvest.runtime.processors.BaseProcessor;
 import org.webharvest.runtime.variables.EmptyVariable;
 import org.webharvest.runtime.variables.Variable;
-/**This Class provides the functionality to add nodes to a given XML-Document by defining an XPath.<br>
- * If your Path is not found, the XMLManipulator tries to reconstruct it by backtracking.
- * All seleting attributes will be setted to, so xpath will match the document next time you try to access it.
- * This Class returns an XML File to the XMLManipulator plugin
+/**This Class returns an XML File to the XMLManipulator plugin
   *
   * @author cockpit4 Gmbh, Kevin Krüger (kkruege@cockpit4.de)
   * @version 1.0
   *
   *  Copyright (c) 2010 cockpit4 GmbH
   *  sdudeamon is released under the MIT license
-*/
-
-public class AddPlugin extends WebHarvestPlugin{
+  */
+public class ElementPlugin extends WebHarvestPlugin{
 	
 	private String xpath;
 	private String value;
@@ -47,7 +43,7 @@ public class AddPlugin extends WebHarvestPlugin{
 	*@return the name tag of this plug in
 	*/
 	public String getName() {
-		return "add";
+		return "change";
 	}
 	/**Returns the the name of valid attributes, since this plugin has just one it returns an string array containing "xpath"
 	*@return empty string array
@@ -94,13 +90,13 @@ public class AddPlugin extends WebHarvestPlugin{
 		// your code to execute plugin
 	        BaseProcessor processor = scraper.getRunningProcessorOfType(XMLManipulatorPlugin.class);
 
-		XMLManipulatorPlugin mp = (XMLManipulatorPlugin) processor; //retrieve our processor
+		XMLManipulatorPlugin mp = (XMLManipulatorPlugin) processor;
 
-		xpath = evaluateAttribute("xpath",scraper); //retrieve the XPath
-		value = executeBody(scraper,context).toString(); // execute subprocessors to get futher data
+		xpath = evaluateAttribute("xpath",scraper);
+		value = executeBody(scraper,context).toString();
 
-		mp.addChangeInfo(new ChangeInfo(xpath,value,ChangeInfo.ACTION_ADD)); // add the change
+		mp.addChangeInfo(new ChangeInfo(xpath,value,ChangeInfo.ACTION_CHANGE));
 		
-		return new EmptyVariable();//return nothing since everything necessary was done
+		return new EmptyVariable();
 	}
 }
