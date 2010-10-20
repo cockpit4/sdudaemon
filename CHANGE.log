@@ -1,0 +1,23 @@
+20.10.2010 - Version 0.1
++ Added a gui configurator
+The class de.cockpit4.sdudaemon.configuration.gui.sduConfigurator has been added.
+It enables you to configure the configurations files for sdudaemon confortably.
+The configurator is in a very early development state so far only logging, state temp and library path settings are implemented
+Further versions shall be able to generate start scripts for cron daemons or other schedulers as well as ability to set database settings and further project details via gui.
+If the library path is set the configurator shows you if it founds all neccessary files.
+
+There is no documentation yet, create it with next commitment (may be).
+
++ Fixed the memory leak
+One problem of long term execution is a design oversight in the web harvest plugin framework.
+It causes a growing memory usage until the Java Virtual Maschine crashed due lag of memory.
+In consequence the XMLManipulatorPlugin now needs the file path where to store your generated file.
+It now returns an EmptyVariable only. So further file handling.
+
++ stabilized XMLManipulator
+The XMLManipulator throwed a lot of dispatchable Exceptions. Some of them are fixed or handled.
+So The program stability will get better.
++ Added this Changelog
+From now on every commit will contain change information.
+
+* - see history

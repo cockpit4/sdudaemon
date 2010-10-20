@@ -28,7 +28,9 @@ import org.jdom.xpath.*;
 
 import java.io.StringReader;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 
 /**
@@ -51,7 +53,7 @@ public class XMLManipulator{
 		//System.out.println("creating object and loading XML Document...");
 		//System.out.println("XML-CONTENT:\n"+xmlContent+"\n-------");
 		
-		if(xmlContent != "")
+		if(xmlContent == null ? "" != null : !xmlContent.equals(""))
 			try{
 				xmlDocument = (new SAXBuilder()).build(new StringReader(xmlContent));
 			}
@@ -74,6 +76,15 @@ public class XMLManipulator{
 	*@return content of the loaded file.
 	*/
 	public static String readFileAsString(String filePath) throws IOException{
+	    if(filePath == null ? "" != null : !filePath.equals("")){
+
+		File file = new File(filePath);
+
+		if(!file.exists()){
+		    FileWriter fw = new FileWriter(file);
+		    fw.close();
+		}
+
 		StringBuilder fileData = new StringBuilder(1000);
 		BufferedReader reader = new BufferedReader(new FileReader(filePath));
 		char[] buf = new char[1024];
@@ -83,6 +94,26 @@ public class XMLManipulator{
 		}
 		reader.close();
 		return fileData.toString();
+	    }
+	    else{
+		return "";
+	    }
+	}
+
+	/**Sets XML content.
+	 *
+	 * @param content
+	 */
+	public void setXMLContent(String xmlContent) throws JDOMException, IOException{
+		if(xmlContent == null ? "" != null : !xmlContent.equals(""))
+			try{
+				xmlDocument = (new SAXBuilder()).build(new StringReader(xmlContent));
+			}
+			catch(JDOMParseException e){
+				xmlDocument = new Document();
+			}
+		else
+			xmlDocument = new Document();
 	}
 
 	/**
@@ -107,19 +138,24 @@ public class XMLManipulator{
 		//	System.out.println("RESULT RETURNS NULL!");
 		//}
 
+		if(result != null){
+		    if(result instanceof Attribute){
+			    return ((org.jdom.Attribute) result).getValue();
+		    }
 
-		if(result instanceof Attribute){
-			return ((org.jdom.Attribute) result).getValue();
+		    if(result instanceof Element){
+			    return ((org.jdom.Element) result).getText();
+		    }
 		}
-
-		if(result instanceof Element){
-			return ((org.jdom.Element) result).getText();
+		else{
+		    addXPathNode(xpath, "");
 		}
 		
 		return null;
 	}
 	/**
-	*Sets a XPath resulting node value
+	*Sets a XPath resulting node value.
+	*If the node does not exist it will  be created
 	*@param xpath to evaluate
 	*@param value to set
 	*/
@@ -130,15 +166,23 @@ public class XMLManipulator{
 		//	System.out.println("RESULT RETURNS NULL!");
 		//}
 
-
-		if(result instanceof Attribute){
-		//	System.out.println("RESULT WAS ATTRIBUTE!");
-			((org.jdom.Attribute) result).setValue(value);
+		if(value == null){
+		    value = "";
 		}
 
-		if(result instanceof Element){
-		//	System.out.println("RESULT WAS ELEMENTNODE!");
-			((org.jdom.Element) result).setText(value);
+		if(result != null){
+		    if(result instanceof Attribute){
+		    //	System.out.println("RESULT WAS ATTRIBUTE!");
+			    ((org.jdom.Attribute) result).setValue(value);
+		    }
+
+		    if(result instanceof Element){
+		    //	System.out.println("RESULT WAS ELEMENTNODE!");
+			    ((org.jdom.Element) result).setText(value);
+		    }
+		}
+		else{ // if the node does not exist create it
+		    addXPathNode(xpath, value);
 		}
 	}
 	/**This function adds a new Node to an valid xpath, to keep the well-form of a document, this function works this way:<br>
