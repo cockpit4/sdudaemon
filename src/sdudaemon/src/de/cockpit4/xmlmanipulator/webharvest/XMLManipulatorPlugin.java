@@ -22,11 +22,12 @@ THE SOFTWARE.
 package de.cockpit4.xmlmanipulator.webharvest;
 
 import de.cockpit4.xmlmanipulator.XMLManipulator;
+import java.io.FileWriter;
 import org.webharvest.runtime.Scraper;
 import org.webharvest.runtime.ScraperContext;
 import org.webharvest.runtime.processors.WebHarvestPlugin;
+import org.webharvest.runtime.variables.EmptyVariable;
 import org.webharvest.runtime.variables.Variable;
-import org.webharvest.runtime.variables.NodeVariable;
 /**This Class provides xml manipulating capabilities such as XML element changing and node addition. 
  * This changes are described within the body of the xml configuration tag of initializing this plugin.
  * See also ElementPlugin AddPlugin and RemovePlugin
@@ -55,36 +56,42 @@ public class XMLManipulatorPlugin extends WebHarvestPlugin{
 	/**Returns the the name of required attributes, since this plugin has none it returns an empty string array
 	*@return empty string array
 	*/
+	@Override
 	public String[] getValidAttributes() {
-		return new String[] {};
+		return new String[] {"file"};
 	}
 	/**Returns the the name of required attributes, since this plugin has none it returns an empty string array
 	*@return empty string array
 	*/
+	@Override
 	public String[] getRequiredAttributes() {
-		return new String[] {};
+		return new String[] {"file"};
 	}
 	/**Returns a list of valid subprocessors
 	*@return {"add","change","remove","xml-content"};
 	*/
+	@Override
 	public String[] getValidSubprocessors() {
 		return new String[] {"add","change","remove","xml-content"};
 	}
 	/**Returns a list of dependant subprocessors since this Plugins has none it returns null which means this plugin is completly independent on subprocessors
 	*@return null;
 	*/
+	@Override
 	public Class[] getDependantProcessors() { //indepedent plugin
 		return new Class[] {ElementPlugin.class,XMLContentPlugin.class,AddPlugin.class};
 	}
 	/** no Attributes so no suggestions
 	*@return null
 	*/
+	@Override
 	public String[] getAttributeValueSuggestions(String attributeName) {
 		return null;
 	}
 	/**The XML-Tag can keep data between the tags so this will return true
 	*@return true
 	*/
+	@Override
 	public boolean hasBody() { //there is content (XML) between the manipulate-xml tags
 		return true;
 	}
@@ -122,7 +129,11 @@ public class XMLManipulatorPlugin extends WebHarvestPlugin{
 
 			String result = xm.toString();
 			//System.out.println("RESULT:\n"+result);
-			return new NodeVariable(result); //return manipulated XML Document (String);
+			String path = evaluateAttribute("path",scraper);
+			FileWriter fw = new FileWriter(path);
+			fw.write(result);
+			fw.close();
+			return new EmptyVariable(); //return manipulated XML Document (String);
 
 		}
 		catch(Exception e){

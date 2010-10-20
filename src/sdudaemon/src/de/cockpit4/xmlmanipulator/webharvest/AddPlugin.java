@@ -52,36 +52,42 @@ public class AddPlugin extends WebHarvestPlugin{
 	/**Returns the the name of valid attributes, since this plugin has just one it returns an string array containing "xpath"
 	*@return empty string array
 	*/
+	@Override
 	public String[] getValidAttributes() {
 		return new String[] {"xpath"};
 	}
 	/**Returns the the name of required attributes, since this plugin has just one it returns an string array containing "xpath"
 	*@return empty string array
 	*/
+	@Override
 	public String[] getRequiredAttributes() {
 		return new String[] {"xpath"};
 	}
 	/**Returns a list of valid subprocessors since it does not matter what kind of Plugins were encapsuled withing this plugin null is return which means all processors can be applied.
 	*@return null;
 	*/
+	@Override
 	public String[] getValidSubprocessors() { //all processors allowed
 		return null;
 	}
 	/**Returns a list of dependant subprocessors since this Plugins has none it returns null which means this plugin is completly independent on subprocessors
 	*@return null;
 	*/
+	@Override
 	public Class[] getDependantProcessors() { //indepedent plugin
 		return null;
 	}
 	/** Attributes but no suggesstions which causes ParseExcetion if they were missing.
 	*@return null
 	*/
+	@Override
 	public String[] getAttributeValueSuggestions(String attributeName) {
 		return null;
 	}
 	/**The XML-Tag can keep data between the tags so this will return true
 	*@return true
 	*/
+	@Override
 	public boolean hasBody() { //there is content (XML) between the manipulate-xml tags
 		return true;
 	}

@@ -44,26 +44,32 @@ public class RemovePlugin extends WebHarvestPlugin{
 		return "remove";
 	}
 
+	@Override
 	public String[] getValidAttributes() {
 		return new String[] {"xpath"};
 	}
 
+	@Override
 	public String[] getRequiredAttributes() {
 		return new String[] {"xpath"};
 	}
 
+	@Override
 	public String[] getValidSubprocessors() { //all processors allowed
 		return null;
 	}
 
+	@Override
 	public Class[] getDependantProcessors() { //indepedent plugin
 		return null;
 	}
 
+	@Override
 	public String[] getAttributeValueSuggestions(String attributeName) {
 		return null;
 	}
 
+	@Override
 	public boolean hasBody() { //there is content (XML) between the manipulate-xml tags
 		return true;
 	}
