@@ -14,6 +14,10 @@ package de.cockpit4.sdudaemon.configuration.gui.view;
 import de.cockpit4.sdudaemon.configuration.gui.controller.ConfigurationController;
 import de.cockpit4.sdudaemon.configuration.gui.model.eventhandling.ModelChangeListener;
 import java.awt.Color;
+import java.io.File;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
@@ -527,6 +531,25 @@ public class ConfigurationWindow extends javax.swing.JFrame implements ModelChan
 
     private void btnGenerateShellActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGenerateShellActionPerformed
 	String config = JOptionPane.showInputDialog("Creating a new File Please Enter Desired Filename"); //create empty configuration if aborted
+	
+	File[] files = new File(configControll.getModel().getLibraryPath()).listFiles();
+	
+	
+	int i = 0;
+	String[] names = null;
+	
+	for(File f : files){
+			try {
+				names[i] = f.getCanonicalPath();
+			}
+			catch (IOException ex) {
+				Logger.getLogger(ConfigurationWindow.class.getName()).log(Level.SEVERE, null, ex);
+			}
+		i++;
+	}
+	
+	
+	
 	if(config!= null){
 		System.err.println("User Dir "+System.getProperty("user.dir"));
 		String result =	  "#!/bin/sh\n"
