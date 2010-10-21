@@ -7,6 +7,7 @@ package de.cockpit4.sdudaemon.configuration.gui.controller;
 import de.cockpit4.sdudaemon.configuration.gui.model.ConfigurationModel;
 import de.cockpit4.sdudaemon.configuration.gui.model.eventhandling.ModelChangeListener;
 import de.cockpit4.xmlmanipulator.XMLManipulator;
+import java.io.File;
 import java.io.FileWriter;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -52,6 +53,39 @@ public class ConfigurationController implements ModelChangeListener {
 		configModel.setLibraryPath(xm.getXPathValue("/config/libraries/@path"));
 		configModel.setStatePath(xm.getXPathValue("/config/statefiles/@path"));
 		configModel.setTempPath(xm.getXPathValue("/config/dump/@path"));
+
+		File configDir = new File(configModel.getLibraryPath());
+
+		File[] list = configDir.listFiles();
+		
+		for(File f : list){
+			byte foundlib = configModel.getFoundLibraries();
+			System.err.print("filename : "+f.getName());
+			if(f.getName().split("[-]")[0].matches("jaxen[.]*")){
+				foundlib |= 1;
+				System.err.println(" matched!");
+			}
+			if(f.getName().split("[-]")[0].matches("bsh[.]*")){
+				foundlib |= 2;
+				System.err.println(" matched!");
+			}
+			if(f.getName().split("[.-]")[0].matches("jdom[.]*")){
+				foundlib |= 4;
+				System.err.println(" matched!");
+			}
+			if(f.getName().split("[-]")[0].matches("postgresql[.]*")){
+				foundlib |= 8;
+				System.err.println(" matched!");
+			}
+			if(f.getName().split("[_-]")[0].matches("webharvest[.]*")){
+				foundlib |= 16;
+				System.err.println(" matched!");
+			}
+			configModel.setFoundLibraries(foundlib);
+		}
+
+		System.err.println("Libs :"+configModel.getFoundLibraries());
+
 	    }
 
 	} catch (Exception ex) {
