@@ -61,26 +61,26 @@ public class ConfigurationController implements ModelChangeListener {
 		//TODO : verify if the files are actual jar libraries instead of matching file name patterns
 		for(File f : list){ // this block retrives all files listed in the lib directory and matches its name patterns to perdefined regexps
 			byte foundlib = configModel.getFoundLibraries();
-			System.err.print("filename : "+f.getName());
+			//System.err.print("filename : "+f.getName());
 			if(f.getName().split("[-]")[0].matches("jaxen[.]*")){
 				foundlib |= 1;
-				System.err.println(" matched!");
+				//System.err.println(" matched!");
 			}
 			if(f.getName().split("[-]")[0].matches("bsh[.]*")){
 				foundlib |= 2;
-				System.err.println(" matched!");
+				//System.err.println(" matched!");
 			}
 			if(f.getName().split("[.-]")[0].matches("jdom[.]*")){
 				foundlib |= 4;
-				System.err.println(" matched!");
+				//System.err.println(" matched!");
 			}
 			if(f.getName().split("[-]")[0].matches("postgresql[.]*")){
 				foundlib |= 8;
-				System.err.println(" matched!");
+				//System.err.println(" matched!");
 			}
 			if(f.getName().split("[_-]")[0].matches("webharvest[.]*")){
 				foundlib |= 16;
-				System.err.println(" matched!");
+				//System.err.println(" matched!");
 			}
 			configModel.setFoundLibraries(foundlib);
 		}
