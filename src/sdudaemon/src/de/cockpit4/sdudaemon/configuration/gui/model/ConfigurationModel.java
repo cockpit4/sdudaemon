@@ -1,7 +1,6 @@
 package de.cockpit4.sdudaemon.configuration.gui.model;
 
 import de.cockpit4.sdudaemon.configuration.gui.model.eventhandling.AbstractObservableModel;
-import de.cockpit4.sdudaemon.configuration.gui.model.eventhandling.AbstractObservableModel;
 
 /**
  *

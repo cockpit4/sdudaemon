@@ -13,9 +13,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
-/**
- *
- * @author kneo
+/** This is the sduDaemon starter class. If you call the main method,
  */
 public class sduConfigurator {
 

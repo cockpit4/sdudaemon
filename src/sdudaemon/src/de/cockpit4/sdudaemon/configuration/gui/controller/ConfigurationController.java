@@ -12,9 +12,8 @@ import java.io.FileWriter;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-/**
- *
- * @author kneo
+/** This class handles the general project configuration. The ConfigurationController updates the configuration file
+ * if the user changes a value in one of the several input fields
  */
 public class ConfigurationController implements ModelChangeListener {
 
@@ -28,7 +27,9 @@ public class ConfigurationController implements ModelChangeListener {
 	    configModel.addListener(this);
 	}
     }
-
+    /**This method returns the the configuration model assigned to this controller. @see ConfigurationModel
+     * @return ConfigurationModel of this controller
+     */
     public ConfigurationModel getModel() {
 	return configModel;
     }
@@ -36,9 +37,9 @@ public class ConfigurationController implements ModelChangeListener {
     private void load() {
 	try {
 	    if (xm == null) //initialize a new XMLManipulator
-		xm = new XMLManipulator(XMLManipulator.readFileAsString(configModel.getConfigPath()));
+		xm = new XMLManipulator(XMLManipulator.readFileAsString(configModel.getConfigPath())); //load file if exists
 
-	    try {
+	    try { // try to retrieve the root node of the configfile if its not found, the file is ussualy empty so generate a new file
 		xm.getXPathValue("/config");//probe if node root exists
 	    } catch (IllegalStateException e) {
 		xm.setXMLContent("<config/>"); //create a new empty configuration
@@ -47,18 +48,18 @@ public class ConfigurationController implements ModelChangeListener {
 		xm.addXPathNode("/config/statefiles/@path","");
 		xm.addXPathNode("/config/dump/@path","");
 		//System.err.println(xm);
-	    } finally {
+	    } finally { //after the file is loaded or created load all values into the model
 		configModel.setLoggerEnabled(Boolean.parseBoolean(xm.getXPathValue("/config/logging/@active")));
 		configModel.setLoggerPath(xm.getXPathValue("/config/logging/@path"));
 		configModel.setLibraryPath(xm.getXPathValue("/config/libraries/@path"));
 		configModel.setStatePath(xm.getXPathValue("/config/statefiles/@path"));
 		configModel.setTempPath(xm.getXPathValue("/config/dump/@path"));
 
-		File configDir = new File(configModel.getLibraryPath());
+		File configDir = new File(configModel.getLibraryPath()); //get the library path to the required jar-files
 
 		File[] list = configDir.listFiles();
-		
-		for(File f : list){
+		//TODO : verify if the files are actual jar libraries instead of matching file name patterns
+		for(File f : list){ // this block retrives all files listed in the lib directory and matches its name patterns to perdefined regexps
 			byte foundlib = configModel.getFoundLibraries();
 			System.err.print("filename : "+f.getName());
 			if(f.getName().split("[-]")[0].matches("jaxen[.]*")){
@@ -84,7 +85,7 @@ public class ConfigurationController implements ModelChangeListener {
 			configModel.setFoundLibraries(foundlib);
 		}
 
-		System.err.println("Libs :"+configModel.getFoundLibraries());
+		//System.err.println("Libs :"+configModel.getFoundLibraries());
 
 	    }
 
@@ -113,7 +114,8 @@ public class ConfigurationController implements ModelChangeListener {
 	    Logger.getLogger(ConfigurationController.class.getName()).log(Level.SEVERE, null, ex);
 	}
     }
-
+    /** This method is the implementation of the @see ModelChangeListener. On change the model is stored in the assigned xml file.
+     */
     public void onChange() {
 	//the model changed some values act here
 	save();

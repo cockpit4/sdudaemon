@@ -46,8 +46,9 @@ public class XPathDissembler{
 		this.xpath = xpath;
 		nodes = new ArrayList<XPathNode>();
 
-		String xpreg = "([/]{1,2})?((@[\\w]+)|([\\w]+(\\[@[\\w]+=['][\\w]+[']\\])*))((/([\\w]+(\\[@[\\w]+=[\\'][\\w]+[\\']\\])*))*|@[\\w]+)";
 		//TODO:change regex to match some special characters like "_-"
+		String xpreg = "([/]{1,2})?((@[\\w]+)|([\\w]+(\\[@[\\w]+=['][\\w]+[']\\])*))((/([\\w]+(\\[@[\\w]+=[\\'][\\w]+[\\']\\])*))*|@[\\w]+)";
+		
 		String node      = "[\\w]+"; //match a node 
 		String attribute = "@[\\w]+"; // match an attribute
 		String predicate = "([[\\w]+][\\[@[\\w]+=\'[\\w]+\'\\]]*)"; // match a predicate

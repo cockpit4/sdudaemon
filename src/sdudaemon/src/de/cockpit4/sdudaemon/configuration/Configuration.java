@@ -104,7 +104,7 @@ public class Configuration {
 				List att; // attribute list
 				for (Object a : elements) { //for each a in list elements
 					//add each scraper recycler etc ...
-					//TODO: add scraper, and updater
+					
 					//TODO: Dispatch further attributes
 					if (a instanceof Element) {
 						if (((Element) a).getName().equals(sections[0])) { //element name is "scraper"
