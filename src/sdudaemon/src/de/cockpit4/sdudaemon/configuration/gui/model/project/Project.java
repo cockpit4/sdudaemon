@@ -5,19 +5,22 @@
 
 package de.cockpit4.sdudaemon.configuration.gui.model.project;
 
-/**
- *
- * @author kneo
- */
-public class Project {
-	private String name;
+import de.cockpit4.sdudaemon.configuration.gui.model.eventhandling.AbstractObservableModel;
 
+/**
+ */
+public class Project extends AbstractObservableModel{
+	private String name;
+	private String path;
+	private boolean active;
+	
 	public String getName() {
 		return name;
 	}
 
 	public void setName(String name) {
 		this.name = name;
+		fireChangeEvent();
 	}
 
 	public String getPath() {
@@ -26,6 +29,15 @@ public class Project {
 
 	public void setPath(String path) {
 		this.path = path;
+		fireChangeEvent();
 	}
-	private String path;
+
+	public boolean isActive() {
+		return active;
+	}
+
+	public void setActive(boolean active) {
+		this.active = active;
+		fireChangeEvent();
+	}
 }

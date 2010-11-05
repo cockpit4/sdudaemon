@@ -1,13 +1,14 @@
 package de.cockpit4.sdudaemon.configuration.gui.model;
 
 import de.cockpit4.sdudaemon.configuration.gui.model.eventhandling.AbstractObservableModel;
+import de.cockpit4.sdudaemon.configuration.gui.model.eventhandling.ModelChangeListener;
 
 /**This class stores the general configuration associated to a project.
  * It implements the Actor - Observer  Model so if a value is changed a listenable change event is fired.
  * The @see ConfigurationController uses this event to store each change the user made.
  * This is helping to keep the GUI simple and stupid or ergonomic if you prefer this term.
  */
-public class ConfigurationModel extends AbstractObservableModel{
+public class ConfigurationModel extends AbstractObservableModel implements ModelChangeListener{
 	private String configPath = "";
 	private String libraryPath= "";
 	private boolean loggerEnabled = false;
@@ -111,5 +112,9 @@ public class ConfigurationModel extends AbstractObservableModel{
 	public void setTempPath(String tempPath) {
 		this.tempPath = tempPath;
 		this.fireChangeEvent();
+	}
+
+	public void onChange() {
+		throw new UnsupportedOperationException("Not supported yet.");
 	}
 }

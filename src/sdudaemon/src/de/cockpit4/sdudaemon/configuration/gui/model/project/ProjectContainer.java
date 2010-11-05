@@ -5,24 +5,36 @@
 
 package de.cockpit4.sdudaemon.configuration.gui.model.project;
 
-import java.util.Iterator;
+import de.cockpit4.sdudaemon.configuration.gui.model.eventhandling.AbstractObservableModel;
+import de.cockpit4.sdudaemon.configuration.gui.model.eventhandling.ModelChangeListener;
+import java.util.ArrayList;
 
 /**
  *
  * @author kneo
  */
-public class ProjectContainer implements Iterator<Project>{
-
-	public boolean hasNext() {
-		throw new UnsupportedOperationException("Not supported yet.");
+public class ProjectContainer extends AbstractObservableModel implements ModelChangeListener{
+	ArrayList<Project> projectList = new ArrayList<Project>();
+	
+	public ProjectContainer(){
+		
+	}
+	
+	public void addProject(Project newProject){
+		if(newProject!= null){
+			newProject.addListener(this);
+			projectList.add(newProject);
+		}
+		else
+			throw new NullPointerException();
+	}
+	
+	public Project getProject(int index){
+		return null;
 	}
 
-	public void remove() {
-		throw new UnsupportedOperationException("Not supported yet.");
-	}
-
-	public Project next() {
-		throw new UnsupportedOperationException("Not supported yet.");
+	public void onChange() {
+		fireChangeEvent();
 	}
 
 }
