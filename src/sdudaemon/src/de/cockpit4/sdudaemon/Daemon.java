@@ -71,8 +71,8 @@ public class Daemon {
 
 			projects = new ArrayList<Configuration>();
 
-	 		DefinitionResolver.registerPlugin("org.kkevin.wsplugin.DelayPlugin");
-			DefinitionResolver.registerPlugin("org.kkevin.xmlmanipulator.XMLManipulatorPlugin");
+	 		DefinitionResolver.registerPlugin("de.cockpit4.wsplugin.DelayPlugin");
+			DefinitionResolver.registerPlugin("de.cockpit4.xmlmanipulator.webharvest.XMLManipulatorPlugin");
 
 			if(Boolean.parseBoolean(xm.getXPathValue("/config/logging/@active"))){
 				Logger.getLogger("SystemLogger").addHandler(new FileHandler(xm.getXPathValue("/config/logging/@path")+Calendar.getInstance().getTime().toString()));

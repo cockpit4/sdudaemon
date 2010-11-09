@@ -11,7 +11,7 @@ public class ProjectContainer extends AbstractTableModel implements ModelChangeL
     ArrayList<Project> projectList = new ArrayList<Project>();
     ArrayList<ModelChangeListener> observers = new ArrayList<ModelChangeListener>();
     
-    public final String[] TABLE_HEADER_NAMES = {"active","name","configuration path"};
+    public final String[] TABLE_HEADER_NAMES = {"Active","Name","Configuration Path"};
 
     public ProjectContainer() {
     }
@@ -67,6 +67,25 @@ public class ProjectContainer extends AbstractTableModel implements ModelChangeL
     @Override
     public String getColumnName(int col){
 	return TABLE_HEADER_NAMES[col];
+    }
+
+    @Override
+    public void setValueAt(Object o, int row, int col){
+	if(isCellEditable(row, col)){
+	    switch(col){
+		case 0:
+		    getProject(row).setActive(Boolean.parseBoolean((String)o));
+		break;
+		case 1://not implemented
+		break;
+		case 2:
+		break;
+	    }
+	}
+    }
+
+    public ArrayList<Project> getProjects(){
+	return projectList;
     }
 
     public Object getValueAt(int row, int col) {

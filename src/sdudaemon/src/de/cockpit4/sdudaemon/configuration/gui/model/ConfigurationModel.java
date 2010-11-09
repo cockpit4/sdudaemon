@@ -1,5 +1,4 @@
 package de.cockpit4.sdudaemon.configuration.gui.model;
-
 import de.cockpit4.sdudaemon.configuration.gui.model.eventhandling.AbstractObservableModel;
 import de.cockpit4.sdudaemon.configuration.gui.model.eventhandling.ModelChangeListener;
 
@@ -16,12 +15,14 @@ public class ConfigurationModel extends AbstractObservableModel implements Model
 	private String statePath = "";
 	private String tempPath = "";
 	private byte foundLibraries = 0;
+	private ProjectContainer projects = new ProjectContainer();
 
 	/** constructor of this class taking the path to the configuration file which the controller need to initialize or load a configuration file
 	 * @param configPath path to configuration file to associate with this model.
 	 */
 	public ConfigurationModel(String configPath) {
 		this.configPath = configPath;
+		projects.addListener(this);
 	}
 
 	/**This sets a byte value to inform the user which library he needs to obtain.
@@ -113,8 +114,16 @@ public class ConfigurationModel extends AbstractObservableModel implements Model
 		this.tempPath = tempPath;
 		this.fireChangeEvent();
 	}
+	/**Returns the projects container holding all project values stored in sdudaemon configuration file
+	 * @return all valid general project definitions in a ProjectContainer object reference
+	 */
+	public ProjectContainer getProjects() {
+	    return projects;
+	}
 
+	/**Because the ConfigurationModel defines a Tree, This method notifies all listeners.
+	 */
 	public void onChange() {
-		throw new UnsupportedOperationException("Not supported yet.");
+		fireChangeEvent();
 	}
 }

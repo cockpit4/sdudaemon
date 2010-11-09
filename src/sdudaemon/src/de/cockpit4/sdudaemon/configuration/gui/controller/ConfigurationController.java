@@ -5,12 +5,16 @@
 package de.cockpit4.sdudaemon.configuration.gui.controller;
 
 import de.cockpit4.sdudaemon.configuration.gui.model.ConfigurationModel;
+import de.cockpit4.sdudaemon.configuration.gui.model.Project;
 import de.cockpit4.sdudaemon.configuration.gui.model.eventhandling.ModelChangeListener;
 import de.cockpit4.xmlmanipulator.XMLManipulator;
 import java.io.File;
 import java.io.FileWriter;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.jdom.Element;
+import org.jdom.xpath.XPath;
 
 /** This class handles the general project configuration. The ConfigurationController updates the configuration file
  * if the user changes a value in one of the several input fields
@@ -85,6 +89,17 @@ public class ConfigurationController implements ModelChangeListener {
 			configModel.setFoundLibraries(foundlib);
 		}
 
+		List project = XPath.selectNodes(xm.getDocument(), "//project");
+
+
+		for(Object node : project){
+		    String name = ((Element)node).getAttributeValue("name");
+		    boolean active = Boolean.parseBoolean(((Element)node).getAttributeValue("active"));
+		    String path = ((Element)node).getAttributeValue("path");
+		    
+		    Project newPr = new Project(active,name,path);
+		    configModel.getProjects().addProject(newPr);
+		}
 		//System.err.println("Libs :"+configModel.getFoundLibraries());
 
 	    }
@@ -105,6 +120,12 @@ public class ConfigurationController implements ModelChangeListener {
 	    xm.setXPathValue("/config/libraries/@path", configModel.getLibraryPath());
 	    xm.setXPathValue("/config/statefiles/@path", configModel.getStatePath());
 	    xm.setXPathValue("/config/dump/@path", configModel.getTempPath());
+
+	    for(Project p : getModel().getProjects().getProjects()){
+		//TODO: save general project data as well
+	    }
+
+
 	    //write the config file
 	    FileWriter fw = new FileWriter(configModel.getConfigPath());
 	    fw.write(xm.toString());
