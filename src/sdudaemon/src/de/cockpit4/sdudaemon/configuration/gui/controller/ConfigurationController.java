@@ -120,11 +120,14 @@ public class ConfigurationController implements ModelChangeListener {
 	    xm.setXPathValue("/config/libraries/@path", configModel.getLibraryPath());
 	    xm.setXPathValue("/config/statefiles/@path", configModel.getStatePath());
 	    xm.setXPathValue("/config/dump/@path", configModel.getTempPath());
-
+	    int i  = 0;
 	    for(Project p : getModel().getProjects().getProjects()){
 		//TODO: save general project data as well
+		xm.setXPathValue("/config/projects/project[@id=\""+i+"\"]/@name", p.getName());
+		xm.setXPathValue("/config/projects/project[@id=\""+i+"\"]/@path", p.getPath());
+		xm.setXPathValue("/config/projects/project[@id=\""+i+"\"]/@active", Boolean.toString(p.isActive()));
+		i++;
 	    }
-
 
 	    //write the config file
 	    FileWriter fw = new FileWriter(configModel.getConfigPath());

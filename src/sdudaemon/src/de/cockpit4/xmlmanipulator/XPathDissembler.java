@@ -51,6 +51,7 @@ public class XPathDissembler{
 		
 		String node      = "[\\w]+"; //match a node 
 		String attribute = "@[\\w]+"; // match an attribute
+		String numberid  = "[\\d]+";
 		String predicate = "([[\\w]+][\\[@[\\w]+=\'[\\w]+\'\\]]*)"; // match a predicate
 		
 
