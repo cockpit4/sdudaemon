@@ -38,7 +38,7 @@ public class XPathNodeAttribute{
 	public XPathNodeAttribute(String name,String value){
 		this.name = name;
 		if(value == null)
-			this.value = "";
+			this.value = null;
 		else
 			this.value = value;
 	}
@@ -58,6 +58,9 @@ public class XPathNodeAttribute{
 	*@return handled attribute in xpath format
 	*/
 	public String toString(){
+		if(value == null){
+		    return "[@"+name+"]";
+		}
 		return "[@"+name+"=\'"+value+"\']";
 	}
 }

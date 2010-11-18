@@ -36,6 +36,15 @@ public class XPathDissembler{
 	private String xpath;
 	private boolean pointsToAttribute = false;
 
+	public static void main(String[] argV){
+	    System.err.println("Entered : "+argV[0]);
+
+	    XPathDissembler xd = new XPathDissembler(argV[0]);
+
+	    //System.err.println("reconstructed : "+xd.composePathOf(xd.getPathDepth(), true));
+
+	}
+
 	/**Create a new XPathDissebler instance with xpath
 	*@param xpath you want to disseble
 	*/
@@ -47,41 +56,59 @@ public class XPathDissembler{
 		nodes = new ArrayList<XPathNode>();
 
 		//TODO:change regex to match some special characters like "_-"
-		String xpreg = "([/]{1,2})?((@[\\w]+)|([\\w]+(\\[@[\\w]+=['][\\w]+[']\\])*))((/([\\w]+(\\[@[\\w]+=[\\'][\\w]+[\\']\\])*))*|@[\\w]+)";
+		String xpreg_start    = "^([/]{1,2})?"; // match / or // at the begin of a path sequence
+		String xpreg_attr     = "(@[A-Za-z]+[-]*[A-Za-z]+)";   // match an single attribute like : //@style or
+		String xpreg_node     = "([A-Za-z]+[0-9]*[-]*[A-Za-z0-9]*)";       // a node without an predicate like : //body
+		String xpreg_node_pre = "(\\[@([A-Za-z]+[0-9]*[-]*[A-Za-z0-9]*)(=\\'([A-Za-z]+[0-9]*[-]*[A-Za-z0-9]*)\\')?\\])"; //or an node with an predicate like : //body[@id='body0']
+		String xpreg_node_num = "(\\[([0-9]+)\\])"; // or a node with number quantifier like : //table/tr[10]
+
+		String xpreg = "^([/]{1,2})?((@[\\w]+)|([\\w]+(\\[@[\\w]+=['][\\w]+[']\\])*))((/([\\w]+(\\[@[\\w]+=[\\'][\\w]+[\\']\\])*))*|@[\\w]+)";
 		
-		String node      = "[\\w]+"; //match a node 
-		String attribute = "@[\\w]+"; // match an attribute
-		String numberid  = "[\\d]+";
-		String predicate = "([[\\w]+][\\[@[\\w]+=\'[\\w]+\'\\]]*)"; // match a predicate
+		String simple_node           = xpreg_node; //match a simple node
+		String simple_attribute      = xpreg_attr; // match a simple attribute
+		String node_number           = xpreg_node+"("+xpreg_node_num+")+"; // match a node with one or more number(s) identifier(s) such as //td[2] to get the every second TD element of a table for example
+		String node_predicate        = xpreg_node+"("+xpreg_node_pre+")+"; // match a node with one or more predicate(s)
+		String node_number_predicate = xpreg_node+"("+xpreg_node_num+"|"+xpreg_node_pre+")+";
+		
 		
 
 		String[] tokens = xpath.split("/"); // split the path into partial strings for dispatching
 		if(tokens.length>0){
 			for(String s : tokens){
 				if(s.length()>0){
-					//System.out.println("Token : "+s);
+					System.out.println("Token : "+s);
 				}
 			}
 
 			for(String s : tokens){
 				if(s.length()>0){
 
-					if(s.matches(node)){
-						//System.out.println("NODE Detected!");
+					if(s.matches(simple_node)){
+						System.out.println("simple NODE Detected!");
 
 						nodes.add(getSimpleNode(s));
 						continue; //work over this ...
 					}
 
-					if(s.matches(predicate)){ //
-						//System.out.println("PREDICATE Detected!");
+					if(s.matches(node_predicate)){ //
+						System.out.println("NODE WITH PREDICATE Detected!");
 
 						nodes.add(getPredicatedNode(s));
 						continue; // work over this ...
 					}
 
-					if(s.matches(attribute)){ //An attribute is the last token of an xpath so finalize and break the loop
-						//System.out.println("ATTRIBUTE Detected!");
+					if(s.matches(node_number)){
+					    System.out.println("NODE WITH NUMBER QUANTIFIER Detected!");
+					    continue;
+					}
+
+					if(s.matches(node_number_predicate)){
+					    System.out.println("NODE WITH NUMBER QUANTIFIERS AND PREDICATES Detected!");
+					    continue;
+					}
+
+					if(s.matches(simple_attribute)){ //An attribute is the last token of an xpath so finalize and break the loop
+						System.out.println("ATTRIBUTE Detected!");
 
 						if(nodes.size()>0)
 							getLastNode(s,nodes.get(nodes.size()-1)); //just add the last attribute with value "" to the last node
@@ -93,7 +120,7 @@ public class XPathDissembler{
 					}
 				}
 			}
-			//System.out.println("Fetching finished!");
+			System.out.println("Fetching finished!");
 		}
 		else
 			throw new IllegalArgumentException();
@@ -102,12 +129,13 @@ public class XPathDissembler{
 	private static XPathNode getPredicatedNode(String token){
 		//System.out.println("\tAdding predicated node : "+token);
 		XPathNode result = null;
-		String[] tokens = token.split("[\\[|@|=|\\]\']");
+		String[] tokens = token.split("[\\[||=|\\]\']");
 
 		int mode = 0;
-		String attName = ""; // to store the Attribute name...
+		String attName = null; // to store the Attribute name...
 
 		for(String t : tokens){
+			System.out.println("\tToken: "+t);
 			if(t.length()>0)
 				switch(mode){
 					case 0: // first encounter of a String
@@ -133,11 +161,11 @@ public class XPathDissembler{
 					break;
 				}
 		}
-
-		if(attName == null ? "" != null : !attName.equals("")){
-			result.addAttribute(new XPathNodeAttribute(attName,""));
+		
+		if(!attName.equals("")){
+			result.addAttribute(new XPathNodeAttribute(attName,null));
 		}
-
+		System.out.println("\tNode: "+result);
 		return result;
 	}
 	//function to fetch a simple node without predicates.
@@ -215,15 +243,15 @@ public class XPathDissembler{
 		return pointsToAttribute;
 	}
 
-	public static void main(String[] args){
-		if(args.length>0){
-			String xpath = args[0];
-
-			XPathDissembler xd = new XPathDissembler(xpath);
-
-			System.out.println("Path : "+xd.composePathOf(xd.getPathDepth(),true));
-		}
-		else
-			System.out.println("Pass XPath as first CL argument!");
-	}
+//	public static void main(String[] args){
+//		if(args.length>0){
+//			String xpath = args[0];
+//
+//			XPathDissembler xd = new XPathDissembler(xpath);
+//
+//			System.out.println("Path : "+xd.composePathOf(xd.getPathDepth(),true));
+//		}
+//		else
+//			System.out.println("Pass XPath as first CL argument!");
+//	}
 }
