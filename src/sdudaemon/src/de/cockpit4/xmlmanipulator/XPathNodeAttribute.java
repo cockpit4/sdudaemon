@@ -31,6 +31,7 @@ package de.cockpit4.xmlmanipulator;
 public class XPathNodeAttribute{
 	private String name;
 	private String value;
+	private boolean numberIdentifier=false;
 	/**Constructor
 	*@param name of the attribute 
 	*@param value of this attribute
@@ -41,6 +42,25 @@ public class XPathNodeAttribute{
 			this.value = null;
 		else
 			this.value = value;
+	}
+
+	/**Constructor
+	*@param name of the attribute
+	*@param value of this attribute
+	*@param numberIdentifier determine if attribute is a ordinal identifier
+	*/
+	public XPathNodeAttribute(String name,String value,boolean numberIdentifier){
+	    if(!numberIdentifier){
+		this.name = name;
+		if(value == null)
+			this.value = null;
+		else
+			this.value = value;
+	    }else{
+		this.name = name; // if attribute looks like "node[0]" just store the 0 as name so the Dissambler can compile the path correctly
+		this.value = null;
+		this.numberIdentifier = true;
+	    }
 	}
 	/**Returns the name of an attribute
 	*@return name of the attribute
@@ -54,13 +74,23 @@ public class XPathNodeAttribute{
 	public String getValue(){
 		return value;
 	}
+	/**Determine if the attribute describes a node by a numeral such as //nodes/node[0]
+	 * @return true if attribute enumerates a selected node
+	 */
+	public boolean isNumberIdentifier(){
+	    return numberIdentifier;
+	}
 	/**Return a string representation of this attribute in xpath format
 	*@return handled attribute in xpath format
 	*/
 	public String toString(){
+	    if(numberIdentifier){
+		return "["+name+"]";
+	    }else{
 		if(value == null){
 		    return "[@"+name+"]";
 		}
 		return "[@"+name+"=\'"+value+"\']";
+	    }
 	}
 }

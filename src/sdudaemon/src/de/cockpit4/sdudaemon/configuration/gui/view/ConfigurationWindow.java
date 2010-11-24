@@ -143,7 +143,7 @@ public class ConfigurationWindow extends javax.swing.JFrame implements ModelChan
             }
         });
 
-        jLabel3.setText("state files:");
+        jLabel3.setText("State Files:");
 
         txtStatePath.setToolTipText("determine where to store project state files");
         txtStatePath.addFocusListener(new java.awt.event.FocusAdapter() {
@@ -162,7 +162,7 @@ public class ConfigurationWindow extends javax.swing.JFrame implements ModelChan
             }
         });
 
-        jLabel4.setText("temporary directory:");
+        jLabel4.setText("Temporary Directory:");
 
         txtTempPath.setToolTipText("determine where to store temporary data");
         txtTempPath.addFocusListener(new java.awt.event.FocusAdapter() {
@@ -181,16 +181,16 @@ public class ConfigurationWindow extends javax.swing.JFrame implements ModelChan
             }
         });
 
-        jLabel5.setText("Note: Paths a System dependent. A Unix configuration will not run on a Windows OS!");
+        jLabel5.setText("<html><b>Note</b>: Paths are OS dependent. A Unix configuration will not run on a e.g. Windows OS unless you adapt all required paths to fit the founding environment!");
 
         javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
         jPanel6.setLayout(jPanel6Layout);
         jPanel6Layout.setHorizontalGroup(
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel6Layout.createSequentialGroup()
-                .addContainerGap()
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel6Layout.createSequentialGroup()
+                        .addContainerGap()
                         .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(jLabel4)
                             .addComponent(jLabel3)
@@ -199,17 +199,17 @@ public class ConfigurationWindow extends javax.swing.JFrame implements ModelChan
                         .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addGroup(jPanel6Layout.createSequentialGroup()
                                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(txtStatePath, javax.swing.GroupLayout.DEFAULT_SIZE, 377, Short.MAX_VALUE)
-                                    .addComponent(txtLoggerPath, javax.swing.GroupLayout.DEFAULT_SIZE, 377, Short.MAX_VALUE))
+                                    .addComponent(txtStatePath, javax.swing.GroupLayout.DEFAULT_SIZE, 333, Short.MAX_VALUE)
+                                    .addComponent(txtLoggerPath, javax.swing.GroupLayout.DEFAULT_SIZE, 333, Short.MAX_VALUE))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                                     .addComponent(btnBrowseLogger)
                                     .addComponent(btnBrowseState)))
                             .addGroup(jPanel6Layout.createSequentialGroup()
-                                .addComponent(txtTempPath, javax.swing.GroupLayout.DEFAULT_SIZE, 377, Short.MAX_VALUE)
+                                .addComponent(txtTempPath, javax.swing.GroupLayout.DEFAULT_SIZE, 333, Short.MAX_VALUE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(btnBrowseTemp))))
-                    .addComponent(jLabel5))
+                    .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 521, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
         jPanel6Layout.setVerticalGroup(
@@ -230,8 +230,7 @@ public class ConfigurationWindow extends javax.swing.JFrame implements ModelChan
                     .addComponent(txtTempPath, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnBrowseTemp))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jLabel5)
-                .addContainerGap())
+                .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         jPanel7.setBorder(javax.swing.BorderFactory.createTitledBorder("Projects"));
@@ -261,7 +260,7 @@ public class ConfigurationWindow extends javax.swing.JFrame implements ModelChan
             jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel7Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 480, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 440, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                     .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -313,7 +312,7 @@ public class ConfigurationWindow extends javax.swing.JFrame implements ModelChan
                 .addContainerGap()
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txtLibPath, javax.swing.GroupLayout.DEFAULT_SIZE, 479, Short.MAX_VALUE)
+                .addComponent(txtLibPath, javax.swing.GroupLayout.DEFAULT_SIZE, 439, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnBrowseLib)
                 .addContainerGap())
@@ -463,7 +462,7 @@ public class ConfigurationWindow extends javax.swing.JFrame implements ModelChan
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                .addContainerGap(674, Short.MAX_VALUE)
+                .addContainerGap(634, Short.MAX_VALUE)
                 .addComponent(btnClose, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
@@ -592,11 +591,6 @@ public class ConfigurationWindow extends javax.swing.JFrame implements ModelChan
 	    configControll.getModel().setStatePath(txtStatePath.getText());
 	    configControll.getModel().setTempPath(txtTempPath.getText());
     }
-
-    /**
-    * @param args the command line arguments
-    */
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnBrowseLib;
     private javax.swing.JButton btnBrowseLogger;

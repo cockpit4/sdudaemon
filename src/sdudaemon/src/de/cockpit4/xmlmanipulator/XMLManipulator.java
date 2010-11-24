@@ -102,7 +102,7 @@ public class XMLManipulator{
 
 	/**Sets XML content.
 	 *
-	 * @param content
+	 * @param xmlContent to set
 	 */
 	public void setXMLContent(String xmlContent) throws JDOMException, IOException{
 		if(xmlContent == null ? "" != null : !xmlContent.equals(""))

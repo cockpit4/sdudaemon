@@ -92,9 +92,9 @@
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" attributes="0">
-                      <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Group type="102" alignment="0" attributes="0">
+                          <Group type="102" attributes="0">
+                              <EmptySpace max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="1" attributes="0">
                                   <Component id="jLabel4" alignment="1" min="-2" max="-2" attributes="0"/>
                                   <Component id="jLabel3" alignment="1" min="-2" max="-2" attributes="0"/>
@@ -104,8 +104,8 @@
                               <Group type="103" groupAlignment="1" attributes="0">
                                   <Group type="102" attributes="0">
                                       <Group type="103" groupAlignment="0" attributes="0">
-                                          <Component id="txtStatePath" pref="377" max="32767" attributes="0"/>
-                                          <Component id="txtLoggerPath" alignment="0" pref="377" max="32767" attributes="0"/>
+                                          <Component id="txtStatePath" pref="333" max="32767" attributes="0"/>
+                                          <Component id="txtLoggerPath" alignment="0" pref="333" max="32767" attributes="0"/>
                                       </Group>
                                       <EmptySpace max="-2" attributes="0"/>
                                       <Group type="103" groupAlignment="1" attributes="0">
@@ -114,13 +114,13 @@
                                       </Group>
                                   </Group>
                                   <Group type="102" alignment="1" attributes="0">
-                                      <Component id="txtTempPath" pref="377" max="32767" attributes="0"/>
+                                      <Component id="txtTempPath" pref="333" max="32767" attributes="0"/>
                                       <EmptySpace max="-2" attributes="0"/>
                                       <Component id="btnBrowseTemp" min="-2" max="-2" attributes="0"/>
                                   </Group>
                               </Group>
                           </Group>
-                          <Component id="jLabel5" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="jLabel5" alignment="0" min="-2" pref="521" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
@@ -147,8 +147,7 @@
                           <Component id="btnBrowseTemp" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="32767" attributes="0"/>
-                      <Component id="jLabel5" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="jLabel5" min="-2" pref="29" max="-2" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -184,7 +183,7 @@
             </Component>
             <Component class="javax.swing.JLabel" name="jLabel3">
               <Properties>
-                <Property name="text" type="java.lang.String" value="state files:"/>
+                <Property name="text" type="java.lang.String" value="State Files:"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JTextField" name="txtStatePath">
@@ -206,7 +205,7 @@
             </Component>
             <Component class="javax.swing.JLabel" name="jLabel4">
               <Properties>
-                <Property name="text" type="java.lang.String" value="temporary directory:"/>
+                <Property name="text" type="java.lang.String" value="Temporary Directory:"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JTextField" name="txtTempPath">
@@ -228,7 +227,7 @@
             </Component>
             <Component class="javax.swing.JLabel" name="jLabel5">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Note: Paths a System dependent. A Unix configuration will not run on a Windows OS!"/>
+                <Property name="text" type="java.lang.String" value="&lt;html&gt;&lt;b&gt;Note&lt;/b&gt;: Paths are OS dependent. A Unix configuration will not run on a e.g. Windows OS unless you adapt all required paths to fit the founding environment!"/>
               </Properties>
             </Component>
           </SubComponents>
@@ -247,7 +246,7 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="1" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="jScrollPane1" pref="480" max="32767" attributes="0"/>
+                      <Component id="jScrollPane1" pref="440" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="1" max="-2" attributes="0">
                           <Component id="jButton3" alignment="1" max="32767" attributes="1"/>
@@ -331,7 +330,7 @@
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="txtLibPath" pref="479" max="32767" attributes="0"/>
+                      <Component id="txtLibPath" pref="439" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="btnBrowseLib" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
@@ -552,7 +551,7 @@
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="1" attributes="0">
-                  <EmptySpace pref="674" max="32767" attributes="0"/>
+                  <EmptySpace pref="634" max="32767" attributes="0"/>
                   <Component id="btnClose" min="-2" pref="114" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>

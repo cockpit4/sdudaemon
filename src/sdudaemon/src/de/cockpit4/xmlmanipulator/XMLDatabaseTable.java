@@ -320,7 +320,7 @@ public final class XMLDatabaseTable{
 	
 	//Check if a table exists.
 	/**Checks if a table exists.
-	 * @param file name to check
+	 * @param filename to check
 	 * @return true if XML File exists
 	 */
 	public static boolean tableExists(String filename) throws IOException{

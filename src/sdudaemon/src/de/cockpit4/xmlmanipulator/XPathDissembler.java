@@ -23,6 +23,8 @@ package de.cockpit4.xmlmanipulator;
 import java.util.ArrayList;
 
 /**This class contains an XPath and enables it to access specific nodes and attributes of an XPath as well as composing a new XPath from your original XPath of specific depth.
+ * For example you have an XPath expression like : //street/house/floor[1]/room[1]/@door-closed and you want to get the path only to second node so just execute : (new XPathDissambler(...Path here...)).composePathOf(1,true) which result //street/house
+ * This class is part of a XML construction and reconstruction framework the sdudaemon needs for data adaptation and pre-database table construction (XML Files the updater just loads into the database).
   *
   * @author cockpit4 Gmbh, Kevin Krüger (kkruege@cockpit4.de)
   * @version 1.0
@@ -46,7 +48,7 @@ public class XPathDissembler{
 	}
 
 	/**Create a new XPathDissebler instance with xpath
-	*@param xpath you want to disseble
+	*@param xpath you want to dissemble
 	*/
 	public XPathDissembler(String xpath){
 		//check if xpath maches an xpath expression
@@ -74,41 +76,43 @@ public class XPathDissembler{
 
 		String[] tokens = xpath.split("/"); // split the path into partial strings for dispatching
 		if(tokens.length>0){
-			for(String s : tokens){
+			/*for(String s : tokens){
 				if(s.length()>0){
 					System.out.println("Token : "+s);
 				}
-			}
+			}*/
 
 			for(String s : tokens){
 				if(s.length()>0){
 
 					if(s.matches(simple_node)){
-						System.out.println("simple NODE Detected!");
+						//System.out.println("simple NODE Detected!");
 
 						nodes.add(getSimpleNode(s));
 						continue; //work over this ...
 					}
 
 					if(s.matches(node_predicate)){ //
-						System.out.println("NODE WITH PREDICATE Detected!");
+						//System.out.println("NODE WITH PREDICATE Detected!");
 
 						nodes.add(getPredicatedNode(s));
 						continue; // work over this ...
 					}
 
 					if(s.matches(node_number)){
-					    System.out.println("NODE WITH NUMBER QUANTIFIER Detected!");
+					    //System.out.println("NODE WITH NUMBER QUANTIFIER Detected!");
+					    nodes.add(getPredicatedNode(s));
 					    continue;
 					}
 
 					if(s.matches(node_number_predicate)){
-					    System.out.println("NODE WITH NUMBER QUANTIFIERS AND PREDICATES Detected!");
+					    //System.out.println("NODE WITH NUMBER QUANTIFIERS AND PREDICATES Detected!");
+					    nodes.add(getPredicatedNode(s));
 					    continue;
 					}
 
 					if(s.matches(simple_attribute)){ //An attribute is the last token of an xpath so finalize and break the loop
-						System.out.println("ATTRIBUTE Detected!");
+						//System.out.println("ATTRIBUTE Detected!");
 
 						if(nodes.size()>0)
 							getLastNode(s,nodes.get(nodes.size()-1)); //just add the last attribute with value "" to the last node
@@ -120,7 +124,7 @@ public class XPathDissembler{
 					}
 				}
 			}
-			System.out.println("Fetching finished!");
+			//System.out.println("Fetching finished!");
 		}
 		else
 			throw new IllegalArgumentException();
@@ -135,7 +139,7 @@ public class XPathDissembler{
 		String attName = null; // to store the Attribute name...
 
 		for(String t : tokens){
-			System.out.println("\tToken: "+t);
+			//System.out.println("\tToken: "+t);
 			if(t.length()>0)
 				switch(mode){
 					case 0: // first encounter of a String
@@ -146,6 +150,12 @@ public class XPathDissembler{
 	
 					case 1: //further Strings
 						//System.out.println("\tAttribute:"+t);
+						if(t.charAt(0) != '@'){
+						    XPathNodeAttribute att = new XPathNodeAttribute(t,null,true); // append a new numeral
+						    result.addAttribute(att);
+						    continue;
+						}
+
 						mode = 2; //next token must be an value
 						attName = t;
 					break;
@@ -153,19 +163,19 @@ public class XPathDissembler{
 					case 2:
 						//System.out.println("\tValue:"+t);
 
-						XPathNodeAttribute att = new XPathNodeAttribute(attName,t);
+						XPathNodeAttribute att = new XPathNodeAttribute(attName.substring(1, attName.length()),t);
 	
 						result.addAttribute(att);
-						attName = ""; // drop the name to make sure any attribute even if it keeps an empty value is add
+						attName = ""; // drop the name to make sure any attribute even if it keeps an empty value is added
 						mode = 1; // next token is an attribute name again
 					break;
 				}
 		}
 		
-		if(!attName.equals("")){
-			result.addAttribute(new XPathNodeAttribute(attName,null));
+		if(attName!=null && !attName.equals("")){
+			result.addAttribute(new XPathNodeAttribute(attName.substring(1, attName.length()),null));
 		}
-		System.out.println("\tNode: "+result);
+		//System.out.println("\tNode: "+result);
 		return result;
 	}
 	//function to fetch a simple node without predicates.
