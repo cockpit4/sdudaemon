@@ -60,6 +60,19 @@ public class ProjectContainer extends AbstractTableModel implements ModelChangeL
     }
 
     @Override
+    public Class getColumnClass(int columnIndex){
+	switch(columnIndex){
+	    case 0:
+		return Boolean.class;
+	    case 1:
+	    case 2:
+		return String.class;
+	    default:
+		return null;
+	}
+    }
+
+    @Override
     public boolean isCellEditable(int row,int col){
 	return col==0;
     }
@@ -74,7 +87,7 @@ public class ProjectContainer extends AbstractTableModel implements ModelChangeL
 	if(isCellEditable(row, col)){
 	    switch(col){
 		case 0:
-		    getProject(row).setActive(Boolean.parseBoolean((String)o));
+		    getProject(row).setActive((Boolean)o);
 		break;
 		case 1://not implemented
 		break;

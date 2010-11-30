@@ -1,3 +1,10 @@
+30.11.2010 - Version 0.2
++ GUI Configurator nealy finished, generates shellscripts only batch files will follow.
++ Began to create a simple project editor, it has become more complex than intended. But it is as it is
++ fixed some issues with the XML Manipulator Framework. Is is more flexible now
++ Still a sample project is missing. No time for something like this yet ... may be later
++ A browsable project documentation is missing but a all classes and methods are documentated with javadoc (expect the very recent created ones)
+
 20.10.2010 - Version 0.1
 + Added a gui configurator
 The class de.cockpit4.sdudaemon.configuration.gui.sduConfigurator has been added.
@@ -18,6 +25,6 @@ It now returns an EmptyVariable only. So further file handling.
 The XMLManipulator throwed a lot of dispatchable Exceptions. Some of them are fixed or handled.
 So The program stability will get better.
 + Added this Changelog
-From now on every commit will contain change information.
+From now on every bigger commit will contain some change information.
 
 * - see history

@@ -41,7 +41,6 @@ public class ConfigurationWindow extends javax.swing.JFrame implements ModelChan
 		folderSelector.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 		
 		projectTable.setModel(m.getModel().getProjects());
-		
 		projectTable.setColumnSelectionAllowed(false);
 		projectTable.setRowSelectionAllowed(true);
 		projectTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -252,6 +251,8 @@ public class ConfigurationWindow extends javax.swing.JFrame implements ModelChan
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
+        projectTable.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_LAST_COLUMN);
+        projectTable.setDoubleBuffered(true);
         jScrollPane1.setViewportView(projectTable);
 
         javax.swing.GroupLayout jPanel7Layout = new javax.swing.GroupLayout(jPanel7);
@@ -543,7 +544,7 @@ public class ConfigurationWindow extends javax.swing.JFrame implements ModelChan
     }//GEN-LAST:event_btnBrowseTempActionPerformed
 
     private void btnGenerateShellActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGenerateShellActionPerformed
-	String config = JOptionPane.showInputDialog("Creating a new File Please Enter Desired Filename"); //create empty configuration if aborted
+	String config = JOptionPane.showInputDialog("Creating a new File Please Enter prefered Filename");
 	
 	File[] files = new File(configControll.getModel().getLibraryPath()).listFiles();
 	
@@ -638,6 +639,7 @@ public class ConfigurationWindow extends javax.swing.JFrame implements ModelChan
 		txtStatePath.setText(configControll.getModel().getStatePath());
 		txtTempPath.setText(configControll.getModel().getTempPath());
 		chkLogger.setSelected(configControll.getModel().isLoggerEnabled());
+		txtLoggerPath.setEnabled(configControll.getModel().isLoggerEnabled());
 		
 		chkJaxen.setSelected((configControll.getModel().getFoundLibraries()&1) == 1);
 		chkJdom.setSelected((configControll.getModel().getFoundLibraries()&4) == 4);
