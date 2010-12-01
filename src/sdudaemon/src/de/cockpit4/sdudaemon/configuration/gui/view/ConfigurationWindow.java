@@ -22,14 +22,17 @@ import java.util.logging.Logger;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.ListSelectionModel;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 /**
  *
  * @author kneo
  */
-public class ConfigurationWindow extends javax.swing.JFrame implements ModelChangeListener{
+public class ConfigurationWindow extends javax.swing.JFrame implements ModelChangeListener, ListSelectionListener{
 	private ConfigurationController configControll;
 	private JFileChooser folderSelector;
+	private ProjectEditor editor = new ProjectEditor(this, true); //TODO : consider making this a none modal dialog...
     /** Creates new form ConfigurationWindow */
     public ConfigurationWindow(ConfigurationController m) {
         initComponents();
@@ -44,7 +47,7 @@ public class ConfigurationWindow extends javax.swing.JFrame implements ModelChan
 		projectTable.setColumnSelectionAllowed(false);
 		projectTable.setRowSelectionAllowed(true);
 		projectTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-
+		projectTable.getSelectionModel().addListSelectionListener(this);
 		
         	txtLoggerPath.setEnabled(chkLogger.isSelected()); // de-/activate textfield depending on check box state
 		btnBrowseLogger.setEnabled(chkLogger.isSelected());
@@ -642,10 +645,11 @@ public class ConfigurationWindow extends javax.swing.JFrame implements ModelChan
 		txtLoggerPath.setEnabled(configControll.getModel().isLoggerEnabled());
 		
 		chkJaxen.setSelected((configControll.getModel().getFoundLibraries()&1) == 1);
-		chkJdom.setSelected((configControll.getModel().getFoundLibraries()&4) == 4);
-		chkPost.setSelected((configControll.getModel().getFoundLibraries()&8) == 8);
-		chkWeb.setSelected((configControll.getModel().getFoundLibraries()&16) == 16);
-		chkBSH.setSelected((configControll.getModel().getFoundLibraries()&2) == 2);
+		chkBSH.setSelected((configControll.getModel().getFoundLibraries()&2)   == 2);
+		chkJdom.setSelected((configControll.getModel().getFoundLibraries()&4)  == 4);
+		chkPost.setSelected((configControll.getModel().getFoundLibraries()&8)  == 8);
+		chkWeb.setSelected((configControll.getModel().getFoundLibraries()&16)  == 16);
+		
 
 		if((configControll.getModel().getFoundLibraries()&31) == 31){
 			lblAllClear.setBackground(Color.GREEN);
@@ -656,6 +660,10 @@ public class ConfigurationWindow extends javax.swing.JFrame implements ModelChan
 			lblAllClear.setText("none OK!");
 		}
 	}
+
+    public void valueChanged(ListSelectionEvent lse) {
+	editor.setEdition(configControll.getModel().getProjects().getProject(lse.getFirstIndex()));
+    }
 
 }
 
