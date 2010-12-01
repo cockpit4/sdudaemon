@@ -1,6 +1,6 @@
 30.11.2010 - Version 0.2
 + GUI Configurator nealy finished, generates shellscripts only batch files will follow.
-+ Began to create a simple project editor, it has become more complex than intended. But it is as it is
++ Started to create a simple project editor, it has become more complex than intended. But it is as it is
 + fixed some issues with the XML Manipulator Framework. Is is more flexible now
 + Still a sample project is missing. No time for something like this yet ... may be later
 + A browsable project documentation is missing but a all classes and methods are documentated with javadoc (expect the very recent created ones)
