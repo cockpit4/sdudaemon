@@ -120,7 +120,7 @@
                                   </Group>
                               </Group>
                           </Group>
-                          <Component id="jLabel5" alignment="0" min="-2" pref="521" max="-2" attributes="0"/>
+                          <Component id="jLabel5" alignment="0" pref="536" max="32767" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
@@ -227,6 +227,9 @@
             </Component>
             <Component class="javax.swing.JLabel" name="jLabel5">
               <Properties>
+                <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                  <Font name="Ubuntu" size="12" style="0"/>
+                </Property>
                 <Property name="text" type="java.lang.String" value="&lt;html&gt;&lt;b&gt;Note&lt;/b&gt;: Paths are OS dependent. A Unix configuration will not run on a e.g. Windows OS unless you adapt all required paths to fit the founding environment!"/>
               </Properties>
             </Component>
@@ -246,12 +249,12 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="1" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="jScrollPane1" pref="440" max="32767" attributes="0"/>
+                      <Component id="jScrollPane1" pref="450" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="1" max="-2" attributes="0">
-                          <Component id="jButton3" alignment="1" max="32767" attributes="1"/>
-                          <Component id="jButton2" alignment="1" max="32767" attributes="1"/>
-                          <Component id="jButton1" alignment="1" max="32767" attributes="1"/>
+                          <Component id="btnPrjRemove" alignment="1" max="32767" attributes="1"/>
+                          <Component id="btnPrjEdit" alignment="1" max="32767" attributes="1"/>
+                          <Component id="btnProjectAdd" alignment="1" max="32767" attributes="1"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
@@ -262,11 +265,11 @@
                   <Group type="102" attributes="0">
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" attributes="0">
-                              <Component id="jButton1" min="-2" max="-2" attributes="0"/>
+                              <Component id="btnProjectAdd" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="jButton2" min="-2" max="-2" attributes="0"/>
+                              <Component id="btnPrjEdit" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="jButton3" min="-2" max="-2" attributes="0"/>
+                              <Component id="btnPrjRemove" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <Component id="jScrollPane1" alignment="0" pref="121" max="32767" attributes="0"/>
                       </Group>
@@ -276,17 +279,23 @@
             </DimensionLayout>
           </Layout>
           <SubComponents>
-            <Component class="javax.swing.JButton" name="jButton1">
+            <Component class="javax.swing.JButton" name="btnProjectAdd">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Add"/>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnProjectAddActionPerformed"/>
+              </Events>
             </Component>
-            <Component class="javax.swing.JButton" name="jButton2">
+            <Component class="javax.swing.JButton" name="btnPrjEdit">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Edit"/>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnPrjEditActionPerformed"/>
+              </Events>
             </Component>
-            <Component class="javax.swing.JButton" name="jButton3">
+            <Component class="javax.swing.JButton" name="btnPrjRemove">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Remove"/>
               </Properties>
@@ -332,7 +341,7 @@
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="txtLibPath" pref="439" max="32767" attributes="0"/>
+                      <Component id="txtLibPath" pref="450" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="btnBrowseLib" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
@@ -414,16 +423,17 @@
           <Layout>
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="102" alignment="0" attributes="0">
+                  <Group type="102" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="lblAllClear" alignment="0" pref="148" max="32767" attributes="0"/>
                           <Component id="jLabel2" alignment="0" min="-2" max="-2" attributes="0"/>
                           <Component id="chkJaxen" alignment="0" min="-2" max="-2" attributes="0"/>
                           <Component id="chkBSH" alignment="0" min="-2" max="-2" attributes="0"/>
                           <Component id="chkJdom" alignment="0" min="-2" max="-2" attributes="0"/>
                           <Component id="chkPost" alignment="0" min="-2" max="-2" attributes="0"/>
                           <Component id="chkWeb" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="chkLog" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="lblAllClear" alignment="0" pref="148" max="32767" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
@@ -444,8 +454,10 @@
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="chkWeb" min="-2" max="-2" attributes="0"/>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                      <Component id="chkLog" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Component id="lblAllClear" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace pref="106" max="32767" attributes="0"/>
+                      <EmptySpace pref="72" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -495,6 +507,12 @@
                 <Property name="text" type="java.lang.String" value="not OK!"/>
                 <Property name="toolTipText" type="java.lang.String" value="Indicates if your library path contains all jar libraries sdudeamon needs to operate properly."/>
                 <Property name="opaque" type="boolean" value="true"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JCheckBox" name="chkLog">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="log4j"/>
+                <Property name="enabled" type="boolean" value="false"/>
               </Properties>
             </Component>
           </SubComponents>
@@ -553,7 +571,7 @@
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="1" attributes="0">
-                  <EmptySpace pref="634" max="32767" attributes="0"/>
+                  <EmptySpace pref="648" max="32767" attributes="0"/>
                   <Component id="btnClose" min="-2" pref="114" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>

@@ -25,7 +25,7 @@ package de.cockpit4.sdudaemon.threads;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Properties;
-import org.apache.log4j.PropertyConfigurator;
+//import org.apache.log4j.PropertyConfigurator; //TODO: reintegrate Apache log4j!
 import de.cockpit4.sdudaemon.configuration.ScraperConfig;
 import org.webharvest.definition.ScraperConfiguration;
 import org.webharvest.runtime.Scraper;
@@ -61,7 +61,7 @@ public class ScraperThread extends Thread{
                 props.setProperty("log4j.appender.file.layout", "org.apache.log4j.PatternLayout");
                 props.setProperty("log4j.appender.file.layout.ConversionPattern", "%-5p (%20F:%-3L) - %m\n");
 
-		PropertyConfigurator.configure(props);
+		//PropertyConfigurator.configure(props);
 		
 		scraperConfig = new ScraperConfiguration(config.configPath);
 		webscraper    = new Scraper(scraperConfig,config.outputPath);

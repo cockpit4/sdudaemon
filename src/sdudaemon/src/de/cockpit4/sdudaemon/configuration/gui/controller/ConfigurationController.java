@@ -66,7 +66,7 @@ public class ConfigurationController implements ModelChangeListener {
 		for(File f : list){ // this block retrives all files listed in the lib directory and matches its name patterns to perdefined regexps
 			byte foundlib = configModel.getFoundLibraries();
 			//System.err.print("filename : "+f.getName());
-			if(f.getName().split("[-]")[0].matches("jaxen[.]*")){
+			if(f.getName().split("[.-]")[0].matches("jaxen[.]*")){
 				foundlib |= 1;
 				//System.err.println(" matched!");
 			}

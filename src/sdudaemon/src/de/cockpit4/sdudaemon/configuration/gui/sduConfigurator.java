@@ -8,6 +8,8 @@ import de.cockpit4.sdudaemon.configuration.gui.controller.ConfigurationControlle
 import de.cockpit4.sdudaemon.configuration.gui.model.ConfigurationModel;
 import de.cockpit4.sdudaemon.configuration.gui.view.ConfigurationWindow;
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFileChooser;
@@ -46,11 +48,11 @@ public class sduConfigurator {
 		do {
 		    config = fc.getCurrentDirectory().getAbsolutePath() + File.separator;
 		    String check = JOptionPane.showInputDialog("Creating a new File Please Enter Desired Filename"); //create empty configuration if aborted
-
+                    System.err.println("Check : "+check);
 		    if (check != null && check.length() > 0 && !check.equals("")) {
 			config += check;
 		    } else {
-			System.err.println("no permission to read or write specified file! exiting...");
+			System.err.println("no file name entered! exiting...");
 			System.exit(-1);
 		    }
 
@@ -58,7 +60,17 @@ public class sduConfigurator {
 	    }
 	}
 
-	File configFile = new File(config);
+	File configFile = new File(config);//create a new file if not existent
+        if(!configFile.exists()){
+            try {
+                FileWriter fw = new FileWriter(configFile);
+                fw.write("");
+                fw.close();
+            } catch (IOException ex) {
+                Logger.getLogger(sduConfigurator.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+        }
 
 	if (!configFile.canRead() || !configFile.canWrite()) { // kill application if user has no right to read or write files to specified location
 	    System.err.println("no permission to read or write specified file! exiting...");

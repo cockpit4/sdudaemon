@@ -12,6 +12,8 @@
 package de.cockpit4.sdudaemon.configuration.gui.view;
 
 import de.cockpit4.sdudaemon.configuration.gui.controller.ConfigurationController;
+import de.cockpit4.sdudaemon.configuration.gui.model.Project;
+import de.cockpit4.sdudaemon.configuration.gui.model.ProjectContainer;
 import de.cockpit4.sdudaemon.configuration.gui.model.eventhandling.ModelChangeListener;
 import java.awt.Color;
 import java.io.File;
@@ -80,9 +82,9 @@ public class ConfigurationWindow extends javax.swing.JFrame implements ModelChan
         btnBrowseTemp = new javax.swing.JButton();
         jLabel5 = new javax.swing.JLabel();
         jPanel7 = new javax.swing.JPanel();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
+        btnProjectAdd = new javax.swing.JButton();
+        btnPrjEdit = new javax.swing.JButton();
+        btnPrjRemove = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         projectTable = new javax.swing.JTable();
         jPanel8 = new javax.swing.JPanel();
@@ -98,6 +100,7 @@ public class ConfigurationWindow extends javax.swing.JFrame implements ModelChan
         chkPost = new javax.swing.JCheckBox();
         chkWeb = new javax.swing.JCheckBox();
         lblAllClear = new javax.swing.JLabel();
+        chkLog = new javax.swing.JCheckBox();
         jPanel5 = new javax.swing.JPanel();
         btnGenerateBatch = new javax.swing.JButton();
         btnGenerateShell = new javax.swing.JButton();
@@ -183,6 +186,7 @@ public class ConfigurationWindow extends javax.swing.JFrame implements ModelChan
             }
         });
 
+        jLabel5.setFont(new java.awt.Font("Ubuntu", 0, 12));
         jLabel5.setText("<html><b>Note</b>: Paths are OS dependent. A Unix configuration will not run on a e.g. Windows OS unless you adapt all required paths to fit the founding environment!");
 
         javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
@@ -211,7 +215,7 @@ public class ConfigurationWindow extends javax.swing.JFrame implements ModelChan
                                 .addComponent(txtTempPath, javax.swing.GroupLayout.DEFAULT_SIZE, 333, Short.MAX_VALUE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(btnBrowseTemp))))
-                    .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 521, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, 536, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jPanel6Layout.setVerticalGroup(
@@ -237,11 +241,21 @@ public class ConfigurationWindow extends javax.swing.JFrame implements ModelChan
 
         jPanel7.setBorder(javax.swing.BorderFactory.createTitledBorder("Projects"));
 
-        jButton1.setText("Add");
+        btnProjectAdd.setText("Add");
+        btnProjectAdd.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnProjectAddActionPerformed(evt);
+            }
+        });
 
-        jButton2.setText("Edit");
+        btnPrjEdit.setText("Edit");
+        btnPrjEdit.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnPrjEditActionPerformed(evt);
+            }
+        });
 
-        jButton3.setText("Remove");
+        btnPrjRemove.setText("Remove");
 
         projectTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -264,12 +278,12 @@ public class ConfigurationWindow extends javax.swing.JFrame implements ModelChan
             jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel7Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 440, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 450, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(btnPrjRemove, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnPrjEdit, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnProjectAdd, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jPanel7Layout.setVerticalGroup(
@@ -277,11 +291,11 @@ public class ConfigurationWindow extends javax.swing.JFrame implements ModelChan
             .addGroup(jPanel7Layout.createSequentialGroup()
                 .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel7Layout.createSequentialGroup()
-                        .addComponent(jButton1)
+                        .addComponent(btnProjectAdd)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton2)
+                        .addComponent(btnPrjEdit)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton3))
+                        .addComponent(btnPrjRemove))
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 121, Short.MAX_VALUE))
                 .addContainerGap())
         );
@@ -316,7 +330,7 @@ public class ConfigurationWindow extends javax.swing.JFrame implements ModelChan
                 .addContainerGap()
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txtLibPath, javax.swing.GroupLayout.DEFAULT_SIZE, 439, Short.MAX_VALUE)
+                .addComponent(txtLibPath, javax.swing.GroupLayout.DEFAULT_SIZE, 450, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnBrowseLib)
                 .addContainerGap())
@@ -374,6 +388,9 @@ public class ConfigurationWindow extends javax.swing.JFrame implements ModelChan
         lblAllClear.setToolTipText("Indicates if your library path contains all jar libraries sdudeamon needs to operate properly.");
         lblAllClear.setOpaque(true);
 
+        chkLog.setText("log4j");
+        chkLog.setEnabled(false);
+
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
         jPanel4Layout.setHorizontalGroup(
@@ -381,13 +398,14 @@ public class ConfigurationWindow extends javax.swing.JFrame implements ModelChan
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(lblAllClear, javax.swing.GroupLayout.DEFAULT_SIZE, 148, Short.MAX_VALUE)
                     .addComponent(jLabel2)
                     .addComponent(chkJaxen)
                     .addComponent(chkBSH)
                     .addComponent(chkJdom)
                     .addComponent(chkPost)
-                    .addComponent(chkWeb))
+                    .addComponent(chkWeb)
+                    .addComponent(chkLog)
+                    .addComponent(lblAllClear, javax.swing.GroupLayout.DEFAULT_SIZE, 148, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jPanel4Layout.setVerticalGroup(
@@ -405,8 +423,10 @@ public class ConfigurationWindow extends javax.swing.JFrame implements ModelChan
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(chkWeb)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(chkLog)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(lblAllClear)
-                .addContainerGap(106, Short.MAX_VALUE))
+                .addContainerGap(72, Short.MAX_VALUE))
         );
 
         jPanel5.setBorder(javax.swing.BorderFactory.createTitledBorder("Start-Helper"));
@@ -466,7 +486,7 @@ public class ConfigurationWindow extends javax.swing.JFrame implements ModelChan
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                .addContainerGap(634, Short.MAX_VALUE)
+                .addContainerGap(648, Short.MAX_VALUE)
                 .addComponent(btnClose, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
@@ -588,6 +608,24 @@ public class ConfigurationWindow extends javax.swing.JFrame implements ModelChan
 	}
     }//GEN-LAST:event_btnGenerateShellActionPerformed
 
+    private void btnProjectAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnProjectAddActionPerformed
+        Project proj = new Project(false, "", "");
+        editor.setEdition(proj);
+        editor.setVisible(true);
+    }//GEN-LAST:event_btnProjectAddActionPerformed
+
+    private void btnPrjEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPrjEditActionPerformed
+        if(!projectTable.getSelectionModel().isSelectionEmpty()){
+                int index = projectTable.getSelectedRow();
+
+                ProjectContainer projects = configControll.getModel().getProjects();
+                Project p = projects.getProject(index);
+
+                editor.setEdition(p);
+                editor.setVisible(true);
+        }
+    }//GEN-LAST:event_btnPrjEditActionPerformed
+
     private void updateValues(){
 	    configControll.getModel().setLoggerEnabled(chkLogger.isSelected());
 	    configControll.getModel().setLoggerPath(txtLoggerPath.getText());
@@ -603,15 +641,16 @@ public class ConfigurationWindow extends javax.swing.JFrame implements ModelChan
     private javax.swing.JButton btnClose;
     private javax.swing.JButton btnGenerateBatch;
     private javax.swing.JButton btnGenerateShell;
+    private javax.swing.JButton btnPrjEdit;
+    private javax.swing.JButton btnPrjRemove;
+    private javax.swing.JButton btnProjectAdd;
     private javax.swing.JCheckBox chkBSH;
     private javax.swing.JCheckBox chkJaxen;
     private javax.swing.JCheckBox chkJdom;
+    private javax.swing.JCheckBox chkLog;
     private javax.swing.JCheckBox chkLogger;
     private javax.swing.JCheckBox chkPost;
     private javax.swing.JCheckBox chkWeb;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
