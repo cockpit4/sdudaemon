@@ -38,49 +38,71 @@ public class XPathDissembler{
 	private String xpath;
 	private boolean pointsToAttribute = false;
 
-	public static void main(String[] argV){
-	    System.err.println("Entered : "+argV[0]);
+	public static void main(String[] argV) throws Exception{
+            String bla = "/config/projects[@id='2'][@path='/a/mmg/']/test/bla/suelz";
 
-	    XPathDissembler xd = new XPathDissembler(argV[0]);
+            
+	    //System.err.println("Entered : "+bla);
 
-	    //System.err.println("reconstructed : "+xd.composePathOf(xd.getPathDepth(), true));
+	    XPathDissembler xd = new XPathDissembler(bla);
 
+	    //System.err.println("reconstructed : "+xd.composePathOf(xd.getPathDepth()-1, bla.matches("^([/]{1,2})?")));
 	}
+        
+        //solving the path separator problem by simple character stuffing
+        private static String prepareString(String exp){
+            String result = "";
+            boolean quote = false;
+            
+            for(int i = 0; i<exp.length();i++){
+                if(exp.charAt(i)=='/'&&!quote){
+                    result += exp.charAt(i)+"-";
+                    continue;
+                }
+
+                if(exp.charAt(i)=='\''){
+                    quote = !quote;
+                    result+=exp.charAt(i);
+                    continue;
+                }
+
+                result+=exp.charAt(i);
+            }
+            //System.err.println("Expression : "+result);
+            return result;
+        }
 
 	/**Create a new XPathDissebler instance with xpath
 	*@param xpath you want to dissemble
 	*/
-	public XPathDissembler(String xpath){
+	public XPathDissembler(String xpath) throws Exception{
 		//check if xpath maches an xpath expression
 		//XPath RegExp 
 		//
-		this.xpath = xpath;
+		this.xpath = prepareString(xpath);
 		nodes = new ArrayList<XPathNode>();
 
-		//TODO:change regex to match some special characters like "_-"
 		String xpreg_start    = "^([/]{1,2})?"; // match / or // at the begin of a path sequence
 		String xpreg_attr     = "(@[A-Za-z]+[-]*[A-Za-z]+)";   // match an single attribute like : //@style or
-		String xpreg_node     = "([A-Za-z]+[0-9]*[-]*[A-Za-z0-9]*)";       // a node without an predicate like : //body
-		String xpreg_node_pre = "(\\[@([A-Za-z]+[0-9]*[-]*[A-Za-z0-9]*)(=\\'([A-Za-z]+[0-9]*[-]*[A-Za-z0-9]*)\\')?\\])"; //or an node with an predicate like : //body[@id='body0']
+		String xpreg_node     = "[A-Za-z]+[0-9]*[-]*[A-Za-z0-9]*";       // a node without an predicate like : //body
+		String xpreg_node_pre = "(\\[@[A-Za-z]+[0-9]*[-]*[A-Za-z0-9]*[=][\\'][A-Za-z0-9-./\\\\:]*\\'\\])?"; //or an node with an predicate like : //body[@id='body0']
 		String xpreg_node_num = "(\\[([0-9]+)\\])"; // or a node with number quantifier like : //table/tr[10]
 
 		String xpreg = "^([/]{1,2})?((@[\\w]+)|([\\w]+(\\[@[\\w]+=['][\\w]+[']\\])*))((/([\\w]+(\\[@[\\w]+=[\\'][\\w]+[\\']\\])*))*|@[\\w]+)";
 		
-		String simple_node           = xpreg_node; //match a simple node
-		String simple_attribute      = xpreg_attr; // match a simple attribute
-		String node_number           = xpreg_node+"("+xpreg_node_num+")+"; // match a node with one or more number(s) identifier(s) such as //td[2] to get the every second TD element of a table for example
-		String node_predicate        = xpreg_node+"("+xpreg_node_pre+")+"; // match a node with one or more predicate(s)
+		String simple_node           = xpreg_node;                          //match a simple node
+		String simple_attribute      = xpreg_attr;                          //match a simple attribute
+		String node_number           = xpreg_node+"("+xpreg_node_num+")+";  //match a node with one or more number(s) identifier(s) such as //td[2] to get the every second TD element of a table for example
+		String node_predicate        = xpreg_node+"("+xpreg_node_pre+")+";  //match a node with one or more predicate(s)
 		String node_number_predicate = xpreg_node+"("+xpreg_node_num+"|"+xpreg_node_pre+")+";
-		
-		
 
-		String[] tokens = xpath.split("/"); // split the path into partial strings for dispatching
+		String[] tokens = this.xpath.split("/-"); // split the path into partial strings for dispatching
 		if(tokens.length>0){
-			/*for(String s : tokens){
+			for(String s : tokens){
 				if(s.length()>0){
-					System.out.println("Token : "+s);
+					//System.out.println("Token : "+s);
 				}
-			}*/
+			}
 
 			for(String s : tokens){
 				if(s.length()>0){
@@ -122,6 +144,7 @@ public class XPathDissembler{
 						pointsToAttribute = true;
 						break;
 					}
+                                        throw new Exception("Token "+s+" not recognized!");
 				}
 			}
 			//System.out.println("Fetching finished!");
@@ -252,16 +275,4 @@ public class XPathDissembler{
 	public boolean pathPointsToAttribute(){
 		return pointsToAttribute;
 	}
-
-//	public static void main(String[] args){
-//		if(args.length>0){
-//			String xpath = args[0];
-//
-//			XPathDissembler xd = new XPathDissembler(xpath);
-//
-//			System.out.println("Path : "+xd.composePathOf(xd.getPathDepth(),true));
-//		}
-//		else
-//			System.out.println("Pass XPath as first CL argument!");
-//	}
 }

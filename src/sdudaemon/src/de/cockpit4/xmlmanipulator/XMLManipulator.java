@@ -162,9 +162,13 @@ public class XMLManipulator{
 	public void setXPathValue(String xpath, String value) throws Exception{
 		Object result = org.jdom.xpath.XPath.selectSingleNode(xmlDocument,xpath);
 		
-		//if(result==null){
-		//	System.out.println("RESULT RETURNS NULL!");
-		//}
+		if(result==null){
+			System.out.println("RESULT RETURNS NULL!");
+                        XPathDissembler xd = new XPathDissembler(xpath);
+                        String newPath = xd.composePathOf(xd.getPathDepth()-1, xpath.matches("^[/]{2,2}"));
+                        result = org.jdom.xpath.XPath.selectSingleNode(xmlDocument,newPath);
+                        System.out.println(" result "+newPath);
+		}
 
 		if(value == null){
 		    value = "";
@@ -198,7 +202,7 @@ public class XMLManipulator{
 	*@param xpath xpath string to traverse
 	*@param value value to set into the xpath described node position of the document tree
 	*/
-	public void addXPathNode(String xpath, String value) throws JDOMException,IllegalArgumentException{
+	public void addXPathNode(String xpath, String value) throws JDOMException,IllegalArgumentException, Exception{
 		//System.out.println("call->addXPathNode(\""+xpath+"\",\""+value+"\") ...");
 
 		XPathDissembler xd        = new XPathDissembler(xpath); //decomposite an xpath
@@ -397,26 +401,9 @@ public class XMLManipulator{
 		try{
 			//test case here ...
 			
-			String test = "<?xml version=\"1.0\"?>\n<db></table ready=\"false\"></db>";
+			String test = "<?xml version=\"1.0\"?>";
 			XMLManipulator xm = new XMLManipulator(test);
-
-			for(String a : args){
-				//System.out.println(xm);
-
-				xm.addXPathNode(a,"");
-				System.out.println(xm);
-			}
-
-			for(String a : args){
-				System.out.print(a+" ");
-				if(xm.nodeExists(a)){
-					System.out.println("XPath Node exists!");
-				}
-			}
-
-			if(xm.nodeExists("//dc[@a='b']")){
-				System.out.println("Single attribute query works too.");
-			}
+                        
 		}
 		catch(Exception e){
 			e.printStackTrace();

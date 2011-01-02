@@ -72,7 +72,7 @@ public class Configuration {
 		recycler = new ArrayList<RecyclerConfig>(); //create the recycler list
 		updater = new ArrayList<UpdaterConfig>(); //create the updater list
 		//load the project config file
-		Document doc = (new SAXBuilder()).build(new StringReader(XMLManipulator.readFileAsString(configPath + "config.xml")));
+		Document doc = (new SAXBuilder()).build(new StringReader(XMLManipulator.readFileAsString(configPath)));
 		//get the project name
 		String projectName = ((Attribute) XPath.selectSingleNode(doc, "/config/@name")).getValue();
 
@@ -88,7 +88,7 @@ public class Configuration {
 		if (!stateDir.exists()) { //create the directories if they do not exist
 			stateDir.mkdirs();
 		}
-		//TODO : Exception handling and better Path tolerance
+		//TODO : (Major) Exception handling and better Path tolerance
 		
 		XMLManipulator statefile; //maniputlator for the state file. It is new created if it does not exist, and loaded otherwise
 

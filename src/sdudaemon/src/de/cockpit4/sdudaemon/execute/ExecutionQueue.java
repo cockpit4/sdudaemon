@@ -103,7 +103,7 @@ public class ExecutionQueue extends Thread {
 					t.start(); //start it
 					t.join(); //wait for it to die
 
-					//TODO : Dispatch configs and save them into the save file
+					//TODO :(Minor) Dispatch configs and save them into the save file
 					if (t instanceof ScraperThread) {
 					}
 

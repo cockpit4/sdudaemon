@@ -1,6 +1,23 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+Copyright (c) 2010 cockpit4, Kevin Krüger
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
  */
 
 /*
@@ -368,19 +385,39 @@ public class ConfigurationWindow extends javax.swing.JFrame implements ModelChan
         jLabel2.setText("found Libraries:");
 
         chkJaxen.setText("jaxen");
-        chkJaxen.setEnabled(false);
+        chkJaxen.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                chkLogActionPerformed(evt);
+            }
+        });
 
         chkBSH.setText("bsh");
-        chkBSH.setEnabled(false);
+        chkBSH.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                chkLogActionPerformed(evt);
+            }
+        });
 
         chkJdom.setText("jdom");
-        chkJdom.setEnabled(false);
+        chkJdom.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                chkLogActionPerformed(evt);
+            }
+        });
 
         chkPost.setText("postgres");
-        chkPost.setEnabled(false);
+        chkPost.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                chkLogActionPerformed(evt);
+            }
+        });
 
         chkWeb.setText("webharvest");
-        chkWeb.setEnabled(false);
+        chkWeb.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                chkLogActionPerformed(evt);
+            }
+        });
 
         lblAllClear.setBackground(java.awt.Color.red);
         lblAllClear.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -389,7 +426,11 @@ public class ConfigurationWindow extends javax.swing.JFrame implements ModelChan
         lblAllClear.setOpaque(true);
 
         chkLog.setText("log4j");
-        chkLog.setEnabled(false);
+        chkLog.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                chkLogActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
@@ -404,8 +445,8 @@ public class ConfigurationWindow extends javax.swing.JFrame implements ModelChan
                     .addComponent(chkJdom)
                     .addComponent(chkPost)
                     .addComponent(chkWeb)
-                    .addComponent(chkLog)
-                    .addComponent(lblAllClear, javax.swing.GroupLayout.DEFAULT_SIZE, 148, Short.MAX_VALUE))
+                    .addComponent(lblAllClear, javax.swing.GroupLayout.DEFAULT_SIZE, 148, Short.MAX_VALUE)
+                    .addComponent(chkLog))
                 .addContainerGap())
         );
         jPanel4Layout.setVerticalGroup(
@@ -422,9 +463,9 @@ public class ConfigurationWindow extends javax.swing.JFrame implements ModelChan
                 .addComponent(chkPost)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(chkWeb)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(chkLog)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(18, 18, 18)
                 .addComponent(lblAllClear)
                 .addContainerGap(72, Short.MAX_VALUE))
         );
@@ -609,8 +650,11 @@ public class ConfigurationWindow extends javax.swing.JFrame implements ModelChan
     }//GEN-LAST:event_btnGenerateShellActionPerformed
 
     private void btnProjectAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnProjectAddActionPerformed
-        Project proj = new Project(false, "", "");
+        Project proj = new Project(false, "name", "/path/to/project/config.file");
+        configControll.getModel().getProjects().addProject(proj);
         editor.setEdition(proj);
+        proj.addListener(editor);
+        //editor.onChange();
         editor.setVisible(true);
     }//GEN-LAST:event_btnProjectAddActionPerformed
 
@@ -626,7 +670,22 @@ public class ConfigurationWindow extends javax.swing.JFrame implements ModelChan
         }
     }//GEN-LAST:event_btnPrjEditActionPerformed
 
+    private void chkLogActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chkLogActionPerformed
+		chkJaxen.setSelected((configControll.getModel().getFoundLibraries()&1) == 1);
+		chkBSH.setSelected((configControll.getModel().getFoundLibraries()&2)   == 2);
+		chkJdom.setSelected((configControll.getModel().getFoundLibraries()&4)  == 4);
+		chkPost.setSelected((configControll.getModel().getFoundLibraries()&8)  == 8);
+		chkWeb.setSelected((configControll.getModel().getFoundLibraries()&16)  == 16);
+                chkLog.setSelected((configControll.getModel().getFoundLibraries()&32)  == 32);
+    }//GEN-LAST:event_chkLogActionPerformed
+
     private void updateValues(){
+            chkJaxen.setSelected((configControll.getModel().getFoundLibraries()&1) == 1);
+            chkBSH.setSelected((configControll.getModel().getFoundLibraries()&2)   == 2);
+            chkJdom.setSelected((configControll.getModel().getFoundLibraries()&4)  == 4);
+            chkPost.setSelected((configControll.getModel().getFoundLibraries()&8)  == 8);
+            chkWeb.setSelected((configControll.getModel().getFoundLibraries()&16)  == 16);
+            chkLog.setSelected((configControll.getModel().getFoundLibraries()&32)  == 32);
 	    configControll.getModel().setLoggerEnabled(chkLogger.isSelected());
 	    configControll.getModel().setLoggerPath(txtLoggerPath.getText());
 	    configControll.getModel().setLibraryPath(txtLibPath.getText());
@@ -681,28 +740,31 @@ public class ConfigurationWindow extends javax.swing.JFrame implements ModelChan
 		txtStatePath.setText(configControll.getModel().getStatePath());
 		txtTempPath.setText(configControll.getModel().getTempPath());
 		chkLogger.setSelected(configControll.getModel().isLoggerEnabled());
+                btnBrowseLogger.setEnabled(configControll.getModel().isLoggerEnabled());
 		txtLoggerPath.setEnabled(configControll.getModel().isLoggerEnabled());
 		
-		chkJaxen.setSelected((configControll.getModel().getFoundLibraries()&1) == 1);
-		chkBSH.setSelected((configControll.getModel().getFoundLibraries()&2)   == 2);
-		chkJdom.setSelected((configControll.getModel().getFoundLibraries()&4)  == 4);
-		chkPost.setSelected((configControll.getModel().getFoundLibraries()&8)  == 8);
-		chkWeb.setSelected((configControll.getModel().getFoundLibraries()&16)  == 16);
-		
+		chkJaxen.setSelected((configControll.getModel().getFoundLibraries()& 1)   == 1);
+		chkBSH.setSelected((configControll.getModel().getFoundLibraries()  & 2)   == 2);
+		chkJdom.setSelected((configControll.getModel().getFoundLibraries() & 4)   == 4);
+		chkPost.setSelected((configControll.getModel().getFoundLibraries() & 8)   == 8);
+		chkWeb.setSelected((configControll.getModel().getFoundLibraries()  & 16)  == 16);
+                chkLog.setSelected((configControll.getModel().getFoundLibraries()  & 32)  == 32);
 
-		if((configControll.getModel().getFoundLibraries()&31) == 31){
+		if((configControll.getModel().getFoundLibraries()&63) == 63){
 			lblAllClear.setBackground(Color.GREEN);
 			lblAllClear.setText("All OK!");
 		}
 		else{
 			lblAllClear.setBackground(Color.RED);
-			lblAllClear.setText("none OK!");
+			lblAllClear.setText("not OK!");
 		}
 	}
 
-    public void valueChanged(ListSelectionEvent lse) {
-	editor.setEdition(configControll.getModel().getProjects().getProject(lse.getFirstIndex()));
-    }
+        public void valueChanged(ListSelectionEvent lse) {
+            if(lse.getFirstIndex()>-1){
+                editor.setEdition(configControll.getModel().getProjects().getProject(lse.getFirstIndex()));
+            }
+        }
 
 }
 

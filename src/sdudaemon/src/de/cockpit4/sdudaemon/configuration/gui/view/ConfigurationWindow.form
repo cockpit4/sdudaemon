@@ -432,8 +432,8 @@
                           <Component id="chkJdom" alignment="0" min="-2" max="-2" attributes="0"/>
                           <Component id="chkPost" alignment="0" min="-2" max="-2" attributes="0"/>
                           <Component id="chkWeb" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Component id="chkLog" alignment="0" min="-2" max="-2" attributes="0"/>
                           <Component id="lblAllClear" alignment="0" pref="148" max="32767" attributes="0"/>
+                          <Component id="chkLog" alignment="0" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
@@ -453,9 +453,9 @@
                       <Component id="chkPost" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="chkWeb" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
                       <Component id="chkLog" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="18" max="-2" attributes="0"/>
                       <Component id="lblAllClear" min="-2" max="-2" attributes="0"/>
                       <EmptySpace pref="72" max="32767" attributes="0"/>
                   </Group>
@@ -471,32 +471,42 @@
             <Component class="javax.swing.JCheckBox" name="chkJaxen">
               <Properties>
                 <Property name="text" type="java.lang.String" value="jaxen"/>
-                <Property name="enabled" type="boolean" value="false"/>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="chkLogActionPerformed"/>
+              </Events>
             </Component>
             <Component class="javax.swing.JCheckBox" name="chkBSH">
               <Properties>
                 <Property name="text" type="java.lang.String" value="bsh"/>
-                <Property name="enabled" type="boolean" value="false"/>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="chkLogActionPerformed"/>
+              </Events>
             </Component>
             <Component class="javax.swing.JCheckBox" name="chkJdom">
               <Properties>
                 <Property name="text" type="java.lang.String" value="jdom"/>
-                <Property name="enabled" type="boolean" value="false"/>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="chkLogActionPerformed"/>
+              </Events>
             </Component>
             <Component class="javax.swing.JCheckBox" name="chkPost">
               <Properties>
                 <Property name="text" type="java.lang.String" value="postgres"/>
-                <Property name="enabled" type="boolean" value="false"/>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="chkLogActionPerformed"/>
+              </Events>
             </Component>
             <Component class="javax.swing.JCheckBox" name="chkWeb">
               <Properties>
                 <Property name="text" type="java.lang.String" value="webharvest"/>
-                <Property name="enabled" type="boolean" value="false"/>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="chkLogActionPerformed"/>
+              </Events>
             </Component>
             <Component class="javax.swing.JLabel" name="lblAllClear">
               <Properties>
@@ -512,8 +522,10 @@
             <Component class="javax.swing.JCheckBox" name="chkLog">
               <Properties>
                 <Property name="text" type="java.lang.String" value="log4j"/>
-                <Property name="enabled" type="boolean" value="false"/>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="chkLogActionPerformed"/>
+              </Events>
             </Component>
           </SubComponents>
         </Container>

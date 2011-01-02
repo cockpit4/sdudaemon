@@ -1,12 +1,23 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+Copyright (c) 2010 cockpit4, Kevin Krüger
 
-/*
- * InstallerWindow.java
- *
- * Created on Dec 22, 2010, 12:51:10 PM
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
  */
 
 package de.cockpit4.sdudaemon.installer;
@@ -26,10 +37,10 @@ import java.util.logging.Logger;
 import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.UIManager;
 
-/**
- *
- * @author kneo
+/**Simple SDUDaemon installer, downloads all required libraries and builds the initial application nest.
+ * @author Kevin Krüger
  */
 public class InstallerWindow extends javax.swing.JFrame implements ChangeListener, FinishedListener{
     boolean[] steps = new boolean[5];
@@ -54,13 +65,6 @@ public class InstallerWindow extends javax.swing.JFrame implements ChangeListene
         stepbox[2] = chkStep2;
         stepbox[3] = chkStep3;
         stepbox[4] = chkStep4;
-        
-        /*try {
-            System.getProperties().load(new FileReader("installer.properties"));
-        } catch (IOException ex) {
-            System.err.println("Exception");
-            Logger.getLogger(InstallerWindow.class.getName()).log(Level.SEVERE, null, ex);
-        }*/
     }
 
     /** This method is called from within the constructor to
@@ -91,8 +95,17 @@ public class InstallerWindow extends javax.swing.JFrame implements ChangeListene
         setResizable(false);
 
         jLabel1.setText("Install sdudaemon including libraries into:");
+        jLabel1.setDoubleBuffered(true);
+
+        txtInstallPath.setDoubleBuffered(true);
+        txtInstallPath.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                txtInstallPathFocusLost(evt);
+            }
+        });
 
         btnBrowse.setText("...");
+        btnBrowse.setDoubleBuffered(true);
         btnBrowse.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnBrowseActionPerformed(evt);
@@ -100,6 +113,7 @@ public class InstallerWindow extends javax.swing.JFrame implements ChangeListene
         });
 
         btnInstall.setText("Install/Update");
+        btnInstall.setDoubleBuffered(true);
         btnInstall.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnInstallActionPerformed(evt);
@@ -108,6 +122,7 @@ public class InstallerWindow extends javax.swing.JFrame implements ChangeListene
 
         chkStep0.setText("Creating directory structure");
         chkStep0.setToolTipText("Create default directory structure. ");
+        chkStep0.setDoubleBuffered(true);
         chkStep0.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 chkStep0ActionPerformed(evt);
@@ -116,6 +131,7 @@ public class InstallerWindow extends javax.swing.JFrame implements ChangeListene
 
         chkStep2.setText("downloading required library");
         chkStep2.setToolTipText("retrieving latest sdudaemon package");
+        chkStep2.setDoubleBuffered(true);
         chkStep2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 chkStep0ActionPerformed(evt);
@@ -124,6 +140,7 @@ public class InstallerWindow extends javax.swing.JFrame implements ChangeListene
 
         chkStep3.setText("downloading sdudaemon binary");
         chkStep3.setToolTipText("Downloading necessary library archives");
+        chkStep3.setDoubleBuffered(true);
         chkStep3.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 chkStep0ActionPerformed(evt);
@@ -132,15 +149,18 @@ public class InstallerWindow extends javax.swing.JFrame implements ChangeListene
 
         chkStep4.setText("Finishing installation");
         chkStep4.setToolTipText("Computer Creates initial application configuration");
+        chkStep4.setDoubleBuffered(true);
         chkStep4.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 chkStep0ActionPerformed(evt);
             }
         });
 
+        pbStatus.setDoubleBuffered(true);
         pbStatus.setStringPainted(true);
 
         btnFinish.setText("Finish");
+        btnFinish.setDoubleBuffered(true);
         btnFinish.setEnabled(false);
         btnFinish.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -149,6 +169,7 @@ public class InstallerWindow extends javax.swing.JFrame implements ChangeListene
         });
 
         chkStep1.setText("Getting latest package information");
+        chkStep1.setDoubleBuffered(true);
         chkStep1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 chkStep0ActionPerformed(evt);
@@ -157,6 +178,7 @@ public class InstallerWindow extends javax.swing.JFrame implements ChangeListene
 
         lblMessage.setBackground(new java.awt.Color(202, 112, 110));
         lblMessage.setText(" ");
+        lblMessage.setDoubleBuffered(true);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -167,11 +189,11 @@ public class InstallerWindow extends javax.swing.JFrame implements ChangeListene
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel1)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(txtInstallPath, javax.swing.GroupLayout.DEFAULT_SIZE, 503, Short.MAX_VALUE)
+                        .addComponent(txtInstallPath, javax.swing.GroupLayout.DEFAULT_SIZE, 446, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnBrowse))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(lblMessage, javax.swing.GroupLayout.DEFAULT_SIZE, 396, Short.MAX_VALUE)
+                        .addComponent(lblMessage, javax.swing.GroupLayout.DEFAULT_SIZE, 339, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnInstall, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(chkStep0)
@@ -179,8 +201,8 @@ public class InstallerWindow extends javax.swing.JFrame implements ChangeListene
                     .addComponent(chkStep2)
                     .addComponent(chkStep3)
                     .addComponent(chkStep4)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(pbStatus, javax.swing.GroupLayout.DEFAULT_SIZE, 476, Short.MAX_VALUE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(pbStatus, javax.swing.GroupLayout.PREFERRED_SIZE, 419, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnFinish)))
                 .addContainerGap())
@@ -212,16 +234,16 @@ public class InstallerWindow extends javax.swing.JFrame implements ChangeListene
                 .addComponent(chkStep3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(chkStep4)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(pbStatus, javax.swing.GroupLayout.DEFAULT_SIZE, 31, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(pbStatus, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnFinish))
                 .addContainerGap())
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
+    //function checks if the install paths are valid. Displays a notify message saying whats the story.
     private void checkPath(){
         File folder = new File(path);
 
@@ -239,7 +261,7 @@ public class InstallerWindow extends javax.swing.JFrame implements ChangeListene
             btnInstall.setEnabled(false);
         }
     }
-
+    //print a notification message
     private void setNotificationMessage(String text,int type){
         Color color = Color.GRAY;
         switch(type){
@@ -274,7 +296,7 @@ public class InstallerWindow extends javax.swing.JFrame implements ChangeListene
         return false;
     }
 
-
+    
     private void chkStep0ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chkStep0ActionPerformed
         int i = 0;
         for(JCheckBox c : stepbox){
@@ -287,10 +309,14 @@ public class InstallerWindow extends javax.swing.JFrame implements ChangeListene
         btnBrowse.setEnabled(false);
         btnInstall.setEnabled(false);
         txtInstallPath.setEnabled(false);
-        for(int i = 0 ; i < 5; i++){
+        lblMessage.setVisible(false);
+        for( int i = 0 ; i < 5; i++){
             try {
+                stepbox[i].setOpaque(true);
+                stepbox[i].setBackground(Color.ORANGE);
                 step(i);
                 steps[i]=true;
+                stepbox[i].setOpaque(false);
                 stepbox[i].setSelected(steps[i]);
                 update(this.getGraphics());
             }
@@ -299,13 +325,15 @@ public class InstallerWindow extends javax.swing.JFrame implements ChangeListene
                 btnBrowse.setEnabled(true);
                 btnInstall.setEnabled(true);
                 txtInstallPath.setEnabled(true);
+                stepbox[i].setOpaque(true);
+                stepbox[i].setBackground(Color.RED);
                 return;
             }
         }
 
         btnFinish.setEnabled(true);
     }//GEN-LAST:event_btnInstallActionPerformed
-
+    
     private void step(int step) throws IOException{
         switch(step){
             case 0:
@@ -357,6 +385,12 @@ public class InstallerWindow extends javax.swing.JFrame implements ChangeListene
         }
     }//GEN-LAST:event_btnBrowseActionPerformed
 
+    private void txtInstallPathFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtInstallPathFocusLost
+        path = txtInstallPath.getText();
+
+        checkPath();
+    }//GEN-LAST:event_txtInstallPathFocusLost
+
     private void step0() throws IOException{ //create directory tree
         File install = new File(path);
         if(install.exists()){
@@ -401,39 +435,39 @@ public class InstallerWindow extends javax.swing.JFrame implements ChangeListene
         try {
             Download jaxen = new Download(new URL(System.getProperty("installer.jaxen.url")), path + File.separator + "lib"+File.separator+"jaxen.jar");
             pbStatus.setMaximum(jaxen.getSize());
-            pbStatus.setString("jaxen framework");
+            pbStatus.setString("jaxen Framework");
             jaxen.addChangeListener(this);
             jaxen.start();
 
             Download jdom = new Download(new URL(System.getProperty("installer.jdom.url")), path + File.separator + "lib"+File.separator+"jdom.jar");
             pbStatus.setMaximum(jdom.getSize());
-            pbStatus.setString("jdom framework");
+            pbStatus.setString("jdom Framework");
             jdom.addChangeListener(this);
             jdom.start();
 
             Download log4j = new Download(new URL(System.getProperty("installer.log4j.url")), path + File.separator + "lib"+File.separator+"log4j.jar");
             pbStatus.setMaximum(log4j.getSize());
-            pbStatus.setString("logger log4j");
+            pbStatus.setString("Logger log4j");
             log4j.addChangeListener(this);
             log4j.start();
 
             Download webharvest = new Download(new URL(System.getProperty("installer.webharvest.url")), path + File.separator + "lib"+File.separator+"webharvest.jar");
             pbStatus.setMaximum(webharvest.getSize());
-            pbStatus.setString("webharvest framework");
+            pbStatus.setString("webharvest Framework");
             webharvest.addChangeListener(this);
             webharvest.start();
 
 
             Download bsh = new Download(new URL(System.getProperty("installer.bsh.url")), path +File.separator + "lib"+ File.separator + "bsh.jar");
             pbStatus.setMaximum(bsh.getSize());
-            pbStatus.setString("beanshell interpreter");
+            pbStatus.setString("beanshell Interpreter");
             bsh.addChangeListener(this);
             bsh.start();
 
 
             Download postgres = new Download(new URL(System.getProperty("installer.postgres.url")), path + File.separator +"lib"+File.separator + "postgres.jar");
             pbStatus.setMaximum(postgres.getSize());
-            pbStatus.setString("postgresql driver");
+            pbStatus.setString("postgresql Driver");
             postgres.addChangeListener(this);
             postgres.start();
 
@@ -445,20 +479,20 @@ public class InstallerWindow extends javax.swing.JFrame implements ChangeListene
     private void step3() throws IOException{ //download sdudaemon binary
             Download sdudaemon = new Download(new URL(System.getProperty("installer.binary.url")), path + File.separator + "lib"+File.separator+"sdudaemon.jar");
             pbStatus.setMaximum(sdudaemon.getSize());
-            pbStatus.setString("sdudaemon binary");
+            pbStatus.setString("sdudaemon Binary");
             sdudaemon.addChangeListener(this);
             sdudaemon.start();
     }
 
-    public void step4(){ //generate start scripts
+    public void step4() throws IOException{ //generate start scripts
         File confBat = new File(path+File.separator+"bin"+File.separator+"configurator.bat");
         File confSH = new File(path+File.separator+"bin"+File.separator+"configurator.sh");
 
         String cmd;
-        cmd = "java -cp \"";
+        cmd = "java -cp \""; //TODO:(MAJOR) make Windows Compatible
         File libdir = new File(path+File.separator+"lib");
         for(File f : libdir.listFiles()){
-            cmd += f.getAbsolutePath()+":";
+            cmd += f.getCanonicalPath()+File.pathSeparator;
         }
         cmd +=".\" de.cockpit4.sdudaemon.configuration.gui.sduConfigurator\n";
 
@@ -469,8 +503,8 @@ public class InstallerWindow extends javax.swing.JFrame implements ChangeListene
         sh = "#/bin/sh\n";
         sh += cmd;
 
-        //System.out.println("sh : "+sh);
-        //System.out.println("bat : "+bat);
+        System.out.println("sh : "+sh);
+        System.out.println("bat : "+bat);
         try {
             FileWriter fw1 = new FileWriter(confBat);
 
@@ -483,13 +517,16 @@ public class InstallerWindow extends javax.swing.JFrame implements ChangeListene
         } catch (IOException ex) {
             Logger.getLogger(InstallerWindow.class.getName()).log(Level.SEVERE, null, ex);
         }
+
+        pbStatus.setString("Installation done!");
     }
 
 
     /**
     * @param args the command line arguments
     */
-    public static void main(String args[]) {
+    public static void main(String args[]) throws Exception {
+        UIManager.setLookAndFeel( UIManager.getSystemLookAndFeelClassName() );
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new InstallerWindow().setVisible(true);

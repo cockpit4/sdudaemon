@@ -53,12 +53,12 @@ public class RecyclerThread extends Thread {
 		bsh.setOut(System.out);
 		bsh.setErr(System.err);
 
-		File output = new File(config.outputPath + config.projectName + "/" + "recycler/" + config.id + "/");
+		File output = new File(config.outputPath + config.projectName + File.pathSeparator + "recycler"+File.pathSeparator + config.id + File.pathSeparator);
 		if (!output.exists()) {
 			output.mkdirs();
 		}
 
-		config.outputPath = output.getAbsolutePath() + "/";
+		config.outputPath = output.getAbsolutePath() + File.pathSeparator;
 		Logger.getLogger("SystemLogger").log(Level.CONFIG, "output Path:{0}", config.outputPath);
 	}
 
@@ -133,7 +133,7 @@ public class RecyclerThread extends Thread {
 				}
 			}
 
-			finalFile.writeFile(config.outputPath+"../final-"+config.id+".xml");
+			finalFile.writeFile(config.outputPath+".."+File.pathSeparator+"final-"+config.id+".xml");
 		}
 		catch (EvalError ex) {
 			Logger.getLogger("SystemLogger").log(Level.SEVERE, null, ex);

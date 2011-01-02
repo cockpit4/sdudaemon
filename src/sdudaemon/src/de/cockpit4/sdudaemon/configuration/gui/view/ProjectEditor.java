@@ -1,6 +1,23 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+Copyright (c) 2010 cockpit4, Kevin Krüger
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
  */
 
 /*
@@ -13,6 +30,12 @@ package de.cockpit4.sdudaemon.configuration.gui.view;
 
 import de.cockpit4.sdudaemon.configuration.gui.model.Project;
 import de.cockpit4.sdudaemon.configuration.gui.model.eventhandling.ModelChangeListener;
+import java.io.File;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JFileChooser;
+import javax.swing.plaf.FileChooserUI;
 
 /**Project Editor UI. Holds the input masks for all required Configuration credentials.
  * @author kneo
@@ -37,6 +60,7 @@ public class ProjectEditor extends javax.swing.JDialog implements ModelChangeLis
     
     public void setEdition(Project edition) {
 	this.edition = edition;
+        onChange();
     }
 
     public Project getEdition() {
@@ -57,12 +81,10 @@ public class ProjectEditor extends javax.swing.JDialog implements ModelChangeLis
         jPanel17 = new javax.swing.JPanel();
         jLabel13 = new javax.swing.JLabel();
         jLabel14 = new javax.swing.JLabel();
-        jLabel15 = new javax.swing.JLabel();
         txtProjectConf = new javax.swing.JTextField();
-        txtTempDir = new javax.swing.JTextField();
         txtName = new javax.swing.JTextField();
-        jButton5 = new javax.swing.JButton();
-        jButton6 = new javax.swing.JButton();
+        btnBrowseProjectConfig = new javax.swing.JButton();
+        chkactive = new javax.swing.JCheckBox();
         jPanel1 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         tblScheduler = new javax.swing.JTable();
@@ -123,9 +145,7 @@ public class ProjectEditor extends javax.swing.JDialog implements ModelChangeLis
 
         jLabel13.setText("Name:");
 
-        jLabel14.setText("Scraper Configuration:");
-
-        jLabel15.setText("Temporary Directory:");
+        jLabel14.setText("Project Configuration:");
 
         txtProjectConf.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusGained(java.awt.event.FocusEvent evt) {
@@ -145,9 +165,19 @@ public class ProjectEditor extends javax.swing.JDialog implements ModelChangeLis
             }
         });
 
-        jButton5.setText("...");
+        btnBrowseProjectConfig.setText("...");
+        btnBrowseProjectConfig.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnBrowseProjectConfigActionPerformed(evt);
+            }
+        });
 
-        jButton6.setText("...");
+        chkactive.setText("Active");
+        chkactive.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                chkactiveActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel17Layout = new javax.swing.GroupLayout(jPanel17);
         jPanel17.setLayout(jPanel17Layout);
@@ -156,24 +186,24 @@ public class ProjectEditor extends javax.swing.JDialog implements ModelChangeLis
             .addGroup(jPanel17Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel17Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel14)
-                    .addComponent(jLabel15)
-                    .addComponent(jLabel13))
-                .addGap(18, 18, 18)
-                .addGroup(jPanel17Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(txtName)
-                    .addComponent(txtTempDir)
-                    .addComponent(txtProjectConf, javax.swing.GroupLayout.PREFERRED_SIZE, 218, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel17Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jButton6)
-                    .addComponent(jButton5))
-                .addContainerGap(381, Short.MAX_VALUE))
+                    .addComponent(chkactive)
+                    .addGroup(jPanel17Layout.createSequentialGroup()
+                        .addGroup(jPanel17Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel14)
+                            .addComponent(jLabel13))
+                        .addGap(18, 18, 18)
+                        .addGroup(jPanel17Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(txtName)
+                            .addComponent(txtProjectConf, javax.swing.GroupLayout.PREFERRED_SIZE, 218, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(btnBrowseProjectConfig)))
+                .addContainerGap(385, Short.MAX_VALUE))
         );
         jPanel17Layout.setVerticalGroup(
             jPanel17Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel17Layout.createSequentialGroup()
-                .addContainerGap()
+                .addComponent(chkactive)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel17Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel13)
                     .addComponent(txtName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -181,13 +211,8 @@ public class ProjectEditor extends javax.swing.JDialog implements ModelChangeLis
                 .addGroup(jPanel17Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel14)
                     .addComponent(txtProjectConf, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton5))
-                .addGap(18, 18, 18)
-                .addGroup(jPanel17Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel15)
-                    .addComponent(txtTempDir, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton6))
-                .addContainerGap(215, Short.MAX_VALUE))
+                    .addComponent(btnBrowseProjectConfig))
+                .addContainerGap(247, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout jPanel16Layout = new javax.swing.GroupLayout(jPanel16);
@@ -210,6 +235,7 @@ public class ProjectEditor extends javax.swing.JDialog implements ModelChangeLis
         jTabbedPane1.addTab("General Project Settings", jPanel16);
 
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Scraper Scheduler"));
+        jPanel1.setEnabled(false);
 
         tblScheduler.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -577,7 +603,7 @@ public class ProjectEditor extends javax.swing.JDialog implements ModelChangeLis
                 .addComponent(jPanel11, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(38, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
@@ -598,6 +624,11 @@ public class ProjectEditor extends javax.swing.JDialog implements ModelChangeLis
         jTabbedPane1.addTab("Database Update Settings", jPanel3);
 
         btnClose.setText("Close");
+        btnClose.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCloseActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
@@ -650,13 +681,37 @@ public class ProjectEditor extends javax.swing.JDialog implements ModelChangeLis
         getMaskValues();
     }//GEN-LAST:event_txtProjectConfFocusGained
 
+    private void btnBrowseProjectConfigActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBrowseProjectConfigActionPerformed
+        JFileChooser fc = new JFileChooser();
+        File config;
+        if(fc.showOpenDialog(this)==JFileChooser.APPROVE_OPTION){
+            config = fc.getSelectedFile();
+            try {
+                edition.setPath(config.getCanonicalPath());
+            } catch (IOException ex) {
+                Logger.getLogger(ProjectEditor.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            onChange();
+        }
+    }//GEN-LAST:event_btnBrowseProjectConfigActionPerformed
+
+    private void chkactiveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chkactiveActionPerformed
+        setMaskValues();
+    }//GEN-LAST:event_chkactiveActionPerformed
+
+    private void btnCloseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCloseActionPerformed
+        this.setVisible(false);
+    }//GEN-LAST:event_btnCloseActionPerformed
+
 
     private void getMaskValues(){
+            chkactive.setSelected(edition.isActive());
             txtName.setText(edition.getName());
             txtProjectConf.setText(edition.getPath());
     }
 
     private void setMaskValues(){
+        edition.setActive(chkactive.isSelected());
         edition.setPath(txtProjectConf.getText());
         edition.setName(txtName.getText());
     }
@@ -679,19 +734,18 @@ public class ProjectEditor extends javax.swing.JDialog implements ModelChangeLis
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnBrowseProjectConfig;
     private javax.swing.JButton btnClose;
+    private javax.swing.JCheckBox chkactive;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
-    private javax.swing.JButton jButton5;
-    private javax.swing.JButton jButton6;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel14;
-    private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -740,7 +794,6 @@ public class ProjectEditor extends javax.swing.JDialog implements ModelChangeLis
     private javax.swing.JTextField txtTableContainer;
     private javax.swing.JTextField txtTargetDB;
     private javax.swing.JTextField txtTargetTable;
-    private javax.swing.JTextField txtTempDir;
     private javax.swing.JTextField txtUsername;
     // End of variables declaration//GEN-END:variables
 

@@ -49,10 +49,11 @@ import javax.swing.tree.TreeNode;
         private void readChildren(){
             if(children == null && node.isDirectory()){
                 File[] files = node.listFiles();
-                children = new FileSystemTreeNode[files.length];
-
-                for(int i = 0; i<files.length;i++){
-                    children[i] = new FileSystemTreeNode(files[i],this);
+                if(files!=null){
+                    children = new FileSystemTreeNode[files.length];
+                    for(int i = 0; i<files.length;i++){
+                        children[i] = new FileSystemTreeNode(files[i],this);
+                    }
                 }
             }
         }
@@ -75,7 +76,10 @@ import javax.swing.tree.TreeNode;
          */
         public int getChildCount() {
             readChildren(); // initialize children
-            return children.length;
+            if(children!=null)
+                return children.length;
+            else
+                return 0;
         }
         /**returns the parent of this node
          * @return parent of this node

@@ -5,8 +5,6 @@
 
 package de.cockpit4.xmlmanipulator;
 
-import org.omg.CORBA.SystemException;
-
 /**
  *
  * @author kneo
@@ -30,54 +28,25 @@ public abstract class XPathParser {
         this.expression = exp;
     }
 
-    private void debugPrint(int pos,int delim){
+    private static void debugPrint(String exp, int pos,int delim){
 
         System.err.println("---------------------------\nExpression :");
-        System.err.println(expression);
+        System.err.println(exp);
         for(int i = 0 ; i<pos;i++){
             System.err.print(" ");
         }
         System.err.print("^");
         if(delim>pos){
             for(int i = pos;i<delim-1;i++){
-                System.err.print(".");
+                System.err.print("-");
             }
-            System.err.println("^\n---------------------------");
+            System.err.println("^");
         }
+        System.err.println("\n---------------------------");
     }
 
     public void start(){
-        String stack = expression;
-        int delimiter = 0;
-        for(int pos = 0 ; pos<expression.length();){  //disect string per character
-            char character = stack.charAt(pos);
-            System.err.println("current character : "+character);
-            switch(character){
-                case '/':
-                        int posbrak = stack.indexOf("[",pos+1);
-                        int posslash = stack.indexOf("/",pos+1);
-                        
-                        if(posbrak<posslash)
-                            delimiter = posbrak;
-                        else
-                            delimiter = posslash;
 
-                        debugPrint(pos, delimiter);
-                        parse(stack.substring(pos, delimiter),pos,(delimiter-pos),XPathParser.TYPE_NODE);
-                    break;
-
-                case '[':
-                    
-                    break;
-
-                default:
-                    break;
-            }
-
-
-
-            pos+=delimiter;
-        }
     }
 
     public abstract void parse(String token,int pos,int len,int type);

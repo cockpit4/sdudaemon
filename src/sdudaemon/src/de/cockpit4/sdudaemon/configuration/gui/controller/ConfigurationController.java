@@ -1,6 +1,23 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+Copyright (c) 2010 cockpit4, Kevin Krüger
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
  */
 package de.cockpit4.sdudaemon.configuration.gui.controller;
 
@@ -51,6 +68,7 @@ public class ConfigurationController implements ModelChangeListener {
 		xm.addXPathNode("/config/libraries/@path","");
 		xm.addXPathNode("/config/statefiles/@path","");
 		xm.addXPathNode("/config/dump/@path","");
+                xm.addXPathNode("/config/projects","");
 		//System.err.println(xm);
 	    } finally { //after the file is loaded or created load all values into the model
 		configModel.setLoggerEnabled(Boolean.parseBoolean(xm.getXPathValue("/config/logging/@active")));
@@ -59,37 +77,9 @@ public class ConfigurationController implements ModelChangeListener {
 		configModel.setStatePath(xm.getXPathValue("/config/statefiles/@path"));
 		configModel.setTempPath(xm.getXPathValue("/config/dump/@path"));
 
-		File configDir = new File(configModel.getLibraryPath()); //get the library path to the required jar-files
+                checkLibs();
 
-		File[] list = configDir.listFiles();
-		//TODO : verify if the files are actual jar libraries instead of matching file name patterns
-		for(File f : list){ // this block retrives all files listed in the lib directory and matches its name patterns to perdefined regexps
-			byte foundlib = configModel.getFoundLibraries();
-			//System.err.print("filename : "+f.getName());
-			if(f.getName().split("[.-]")[0].matches("jaxen[.]*")){
-				foundlib |= 1;
-				//System.err.println(" matched!");
-			}
-			if(f.getName().split("[-]")[0].matches("bsh[.]*")){
-				foundlib |= 2;
-				//System.err.println(" matched!");
-			}
-			if(f.getName().split("[.-]")[0].matches("jdom[.]*")){
-				foundlib |= 4;
-				//System.err.println(" matched!");
-			}
-			if(f.getName().split("[-]")[0].matches("postgresql[.]*")){
-				foundlib |= 8;
-				//System.err.println(" matched!");
-			}
-			if(f.getName().split("[_-]")[0].matches("webharvest[.]*")){
-				foundlib |= 16;
-				//System.err.println(" matched!");
-			}
-			configModel.setFoundLibraries(foundlib);
-		}
-
-		List project = XPath.selectNodes(xm.getDocument(), "//project");
+		List project = XPath.selectNodes(xm.getDocument(), "/config/projects/project");
 
 
 		for(Object node : project){
@@ -109,23 +99,61 @@ public class ConfigurationController implements ModelChangeListener {
 	}
     }
 
+    private void checkLibs(){
+		File configDir = new File(configModel.getLibraryPath()); //get the library path to the required jar-files
+		File[] list = configDir.listFiles();
+
+                if(list != null){
+                    //TODO : verify if the files are actual jar libraries instead of matching file name patterns
+                    for(File f : list){ // this block retrives all files listed in the lib directory and matches its name patterns to perdefined regexps
+                            byte foundlib = configModel.getFoundLibraries();
+                            //System.err.print("filename : "+f.getName());
+                            if(f.getName().split("[.-]")[0].matches("jaxen[.]*")){
+                                    foundlib |= 1;
+                                    //System.err.println(" matched!");
+                            }
+                            if(f.getName().split("[-]")[0].matches("bsh[.]*")){
+                                    foundlib |= 2;
+                                    //System.err.println(" matched!");
+                            }
+                            if(f.getName().split("[.-]")[0].matches("jdom[.]*")){
+                                    foundlib |= 4;
+                                    //System.err.println(" matched!");
+                            }
+                            if(f.getName().split("[-]")[0].matches("postgresql[.]*")){
+                                    foundlib |= 8;
+                                    //System.err.println(" matched!");
+                            }
+                            if(f.getName().split("[_-]")[0].matches("webharvest[.]*")){
+                                    foundlib |= 16;
+                                    //System.err.println(" matched!");
+                            }
+                            if(f.getName().split("[._-]")[0].matches("log4j[.]*")){
+                                    foundlib |= 32;
+                                    //System.err.println(" matched!");
+                            }
+                            configModel.setFoundLibraries(foundlib);
+                    }
+                }
+                else{
+                    configModel.setFoundLibraries((byte)0);
+                }
+    }
+
     private void save() {
 	try {
 	    if (xm == null) //initialize a new XMLManipulator if not existend
 		 xm = new XMLManipulator(XMLManipulator.readFileAsString(configModel.getConfigPath()));
 	    //System.err.println(xm);
-
-	    xm.setXPathValue("/config/logging/@active", Boolean.toString(configModel.isLoggerEnabled()));
-	    xm.setXPathValue("/config/logging/@path", configModel.getLoggerPath());
-	    xm.setXPathValue("/config/libraries/@path", configModel.getLibraryPath());
-	    xm.setXPathValue("/config/statefiles/@path", configModel.getStatePath());
-	    xm.setXPathValue("/config/dump/@path", configModel.getTempPath());
+            xm.setXMLContent("<config/>"); //create a new empty configuration
+            xm.addXPathNode("/config/logging[@active=\'"+configModel.isLoggerEnabled()+"\']/@path",configModel.getLoggerPath());
+            xm.addXPathNode("/config/libraries/@path",configModel.getLibraryPath());
+            xm.addXPathNode("/config/statefiles/@path",configModel.getStatePath());
+            xm.addXPathNode("/config/dump/@path",configModel.getTempPath());
+            xm.addXPathNode("/config/projects","");
 	    int i  = 0;
 	    for(Project p : getModel().getProjects().getProjects()){
-		//TODO: save general project data as well
-		xm.setXPathValue("/config/projects/project[@id=\""+i+"\"]/@name", p.getName());
-		xm.setXPathValue("/config/projects/project[@id=\""+i+"\"]/@path", p.getPath());
-		xm.setXPathValue("/config/projects/project[@id=\""+i+"\"]/@active", Boolean.toString(p.isActive()));
+		xm.addXPathNode("/config/projects/project[@name=\'"+p.getName()+"\'][@path=\'"+p.getPath()+"\'][@active=\'"+p.isActive()+"\']","");
 		i++;
 	    }
 
@@ -142,6 +170,7 @@ public class ConfigurationController implements ModelChangeListener {
      */
     public void onChange() {
 	//the model changed some values act here
+        checkLibs();
 	save();
     }
 }
