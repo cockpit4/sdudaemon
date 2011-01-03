@@ -76,7 +76,13 @@ public final class XMLDatabaseTable{
 	//creates a new table column labeled "name" of type "type" if it exists this method does nothing
 	public void addColumn(String name,String type) throws JDOMException{
 		if(!xm.nodeExists("/table/head/column[@name=\'"+name+"\']")){
-			xm.addXPathNode("/table/head/column[@name=\'"+name+"\'][@type=\'"+type+"\']","");
+                    try {
+                        xm.addXPathNode("/table/head/column[@name=\'" + name + "\'][@type=\'" + type + "\']", "");
+                    } catch (IllegalArgumentException ex) {
+                        Logger.getLogger(XMLDatabaseTable.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (Exception ex) {
+                        Logger.getLogger(XMLDatabaseTable.class.getName()).log(Level.SEVERE, null, ex);
+                    }
 		}
 	}
 

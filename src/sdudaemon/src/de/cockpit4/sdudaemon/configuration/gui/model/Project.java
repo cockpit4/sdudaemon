@@ -22,7 +22,11 @@ THE SOFTWARE.
 
 package de.cockpit4.sdudaemon.configuration.gui.model;
 
+import de.cockpit4.sdudaemon.configuration.RecyclerConfig;
+import de.cockpit4.sdudaemon.configuration.ScraperConfig;
+import de.cockpit4.sdudaemon.configuration.UpdaterConfig;
 import de.cockpit4.sdudaemon.configuration.gui.model.eventhandling.AbstractObservableModel;
+import java.util.ArrayList;
 
 /**This class describes the link to a scraping project. In order to implement the actor observer model it implements the AbstractObservableModel to notify listeners about data changes.
  */
@@ -30,6 +34,11 @@ public class Project extends AbstractObservableModel{
 	private String name;
 	private String path;
 	private boolean active;
+        private ArrayList<ScraperConfig> scraper = new ArrayList<ScraperConfig>();
+        private ArrayList<RecyclerConfig> recycler = new ArrayList<RecyclerConfig>();
+        private ArrayList<UpdaterConfig> updater = new ArrayList<UpdaterConfig>();
+
+
 	/**Creates a new project node.
 	 * @param act set the state of a project (en- or disabled)
 	 * @param name set the name of the project required for debug and information purposes
@@ -79,4 +88,60 @@ public class Project extends AbstractObservableModel{
 		this.active = active;
 		fireChangeEvent();
 	}
+
+
+        //TODO : (Trivial) documentation
+        public void addScraper(ScraperConfig s){
+            scraper.add(s);
+            fireChangeEvent();
+        }
+
+        public void addRecycler(RecyclerConfig s){
+            recycler.add(s);
+            fireChangeEvent();
+        }
+
+        public void addUpdater(UpdaterConfig s){
+            updater.add(s);
+            fireChangeEvent();
+        }
+
+        public void removeScraper(ScraperConfig s){
+            scraper.remove(s);
+            fireChangeEvent();
+        }
+
+        public void removeRecycler(RecyclerConfig s){
+            recycler.remove(s);
+            fireChangeEvent();
+        }
+
+        public void removeUpdater(UpdaterConfig s){
+            updater.remove(s);
+            fireChangeEvent();
+        }
+
+        public ScraperConfig getScraper(int i){
+            return scraper.get(i);
+        }
+
+        public RecyclerConfig getRecycler(int i){
+            return recycler.get(i);
+        }
+
+        public UpdaterConfig getUpdater(int i){
+            return updater.get(i);
+        }
+
+        public int getScraperCount(){
+            return scraper.size();
+        }
+
+        public int getRecyclerCount(){
+            return recycler.size();
+        }
+
+        public int getUpdaterCount(){
+            return updater.size();
+        }
 }

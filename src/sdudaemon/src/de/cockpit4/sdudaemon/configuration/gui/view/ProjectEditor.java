@@ -28,6 +28,7 @@ THE SOFTWARE.
 
 package de.cockpit4.sdudaemon.configuration.gui.view;
 
+import de.cockpit4.sdudaemon.configuration.gui.controller.ProjectController;
 import de.cockpit4.sdudaemon.configuration.gui.model.Project;
 import de.cockpit4.sdudaemon.configuration.gui.model.eventhandling.ModelChangeListener;
 import java.io.File;
@@ -42,6 +43,7 @@ import javax.swing.plaf.FileChooserUI;
  */
 public class ProjectEditor extends javax.swing.JDialog implements ModelChangeListener{
     private Project edition;
+    private ProjectController controll;
     
     /** Creates new form ProjectEditor */
     public ProjectEditor(java.awt.Frame parent, boolean modal,Project edit) {
@@ -50,6 +52,7 @@ public class ProjectEditor extends javax.swing.JDialog implements ModelChangeLis
 
         if(edit!=null){
             edition = edit;
+            controll= new ProjectController(edit);
         }
     }
 
