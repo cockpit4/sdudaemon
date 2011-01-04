@@ -33,6 +33,7 @@ import org.jdom.xpath.XPath;
 import de.cockpit4.sdudaemon.configuration.Configuration;
 import de.cockpit4.sdudaemon.execute.ExecutionQueue;
 import de.cockpit4.xmlmanipulator.XMLManipulator;
+import java.util.logging.Handler;
 import org.webharvest.definition.DefinitionResolver;
 
 /**
@@ -48,7 +49,7 @@ import org.webharvest.definition.DefinitionResolver;
 public class Daemon {
 	private ArrayList<Configuration> projects;
 	private ArrayList<ExecutionQueue> threads;
-
+        public static Logger systemLogger = Logger.getLogger("SystemLogger");
 	/**Initialize the Deamon and loades a configfile
 	 * after a configfile is loaded find the project directory and load all valid projects
 	 * Creates  an ExecutionQueue-Thread and prepares them for execution
@@ -77,7 +78,6 @@ public class Daemon {
 			if(Boolean.parseBoolean(xm.getXPathValue("/config/logging/@active"))){
 				Logger.getLogger("SystemLogger").addHandler(new FileHandler(xm.getXPathValue("/config/logging/@path")+Calendar.getInstance().getTime().toString()));
 			}
-                        
 
 			outputPath = xm.getXPathValue("//dump/@path");
 			statePath = xm.getXPathValue("//statefiles/@path");
@@ -86,7 +86,7 @@ public class Daemon {
 			Logger.getLogger("SystemLogger").setLevel(Level.ALL);
 			Logger.getLogger("SystemLogger").config("logger successfully initialized!");
 			List results = XPath.selectNodes(xm.getDocument(), "//projects/project/@path");
-			Logger.getLogger("SystemLogger").log(Level.CONFIG, "Projects found : {0}", results.size());
+			Logger.getLogger("SystemLogger").log(Level.FINEST, "Projects found : {0}", results.size());
 			for(Object c : results){
 				if(c instanceof Attribute){
                                         Logger.getLogger("SystemLogger").log(Level.INFO, "adding {0}", ((Attribute) c).getValue());

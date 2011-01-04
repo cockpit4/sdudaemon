@@ -49,7 +49,7 @@ public class UpdaterThread extends Thread{
 	 */
 	public UpdaterThread(UpdaterConfig conf) throws ClassNotFoundException, IOException, Exception{
 		this.config = conf;
-
+                Logger.getLogger("SystemLogger").log(Level.INFO, "Starting database updater...");
 		if(XMLDatabaseTable.tableExists(conf.inputFile)){
 			loader = new XMLDatabaseLoader(conf.host, conf.port,conf.user,conf.pass,new XMLDatabaseTable(conf.inputFile));
 		}
@@ -62,7 +62,9 @@ public class UpdaterThread extends Thread{
 	@Override
 	public void run(){
 		try {
+                        Logger.getLogger("SystemLogger").log(Level.INFO, "Loading new Table");
 			loader.load();
+                        Logger.getLogger("SystemLogger").log(Level.FINEST, "Table successfully loaded! Database now up to date!");
 		}
 		catch (JDOMException ex) {
 			Logger.getLogger("SystemLogger").log(Level.SEVERE, null, ex);

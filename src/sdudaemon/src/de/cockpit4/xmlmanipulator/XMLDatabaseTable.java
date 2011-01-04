@@ -246,7 +246,6 @@ public final class XMLDatabaseTable{
 		
 		for(Object row : rows){ //dispatch each row
 			int id       = Integer.parseInt(((Element) row).getAttributeValue("id")); //ID of the dataset
-                        //System.out.println("ID : "+id);
 			List columns = XPath.selectNodes(getDocument(), "/table/body/row[@id=\'"+id+"\']/column"); //select column names and data
 
 			String[]        data        = new String[columns.size()];
@@ -339,7 +338,7 @@ public final class XMLDatabaseTable{
 	 * @param filename to write
 	 */
 	public void writeFile(String filename) throws IOException{
-		System.out.println("writing "+filename);
+		//System.out.println("writing "+filename);
 
 		File out = new File(filename);
 

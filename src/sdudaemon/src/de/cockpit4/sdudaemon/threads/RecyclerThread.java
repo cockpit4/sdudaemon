@@ -86,7 +86,7 @@ public class RecyclerThread extends Thread {
 
 			Logger.getLogger("SystemLogger").log(Level.CONFIG, "new Configuration : {0}", config.outputPath);
 
-                        System.err.println("Database in recycler Thread : "+config.database);
+                        //System.err.println("Database in recycler Thread : "+config.database);
 			resultDocument = new XMLDatabaseTable(config.table, config.database);
 
 
@@ -136,12 +136,13 @@ public class RecyclerThread extends Thread {
                         //System.out.println("Final File : \n"+finalFile);
 			for(File file : outputFiles){
 				if(file.isFile()){
-					System.out.println("Appending file "+file.getName()+" ...");
+					//System.out.println("Appending file "+file.getName()+" ...");
 					finalFile.append(new XMLDatabaseTable(file.getAbsolutePath()));
 				}
 			}
 
 			finalFile.writeFile(config.outputPath+".."+File.separator+"final-"+config.id+".xml");
+                        Logger.getLogger("SystemLogger").log(Level.FINEST, "Table XML File successfully written.");
 		}
 		catch (EvalError ex) {
 			Logger.getLogger("SystemLogger").log(Level.SEVERE, null, ex);

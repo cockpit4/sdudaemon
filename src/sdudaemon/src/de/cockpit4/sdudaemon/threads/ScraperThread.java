@@ -56,7 +56,7 @@ public class ScraperThread extends Thread{
                 props.setProperty("log4j.appender.stdout.layout.ConversionPattern", "%-5p (%20F:%-3L) - %m\n");
 
                 props.setProperty("log4j.appender.file", "org.apache.log4j.DailyRollingFileAppender");
-                props.setProperty("log4j.appender.file.File", conf.outputPath + "log/out-"+config.projectName+".log");
+                props.setProperty("log4j.appender.file.File", config.projectName+".log");
                 props.setProperty("log4j.appender.file.DatePattern", "yyyy-MM-dd");
                 props.setProperty("log4j.appender.file.layout", "org.apache.log4j.PatternLayout");
                 props.setProperty("log4j.appender.file.layout.ConversionPattern", "%-5p (%20F:%-3L) - %m\n");
