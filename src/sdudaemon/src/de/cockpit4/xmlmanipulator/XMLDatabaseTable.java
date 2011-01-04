@@ -234,18 +234,19 @@ public final class XMLDatabaseTable{
 
 		int i = 0;
 		for(Object column : head){
-			String name  = ((Element) column).getAttributeValue("name");
+			String fieldname  = ((Element) column).getAttributeValue("name");
 			String type  = ((Element) column).getAttributeValue("type");
-			columnSet[i] = new XMLDataColumn(name,type);
+			columnSet[i] = new XMLDataColumn(fieldname,type);
 			i++;
 		}
 
 		XMLDataRow[] result  = new XMLDataRow[rows.size()];
-
+                //System.out.println("Rows.size() : "+rows.size());
 		i=0;
 		
 		for(Object row : rows){ //dispatch each row
 			int id       = Integer.parseInt(((Element) row).getAttributeValue("id")); //ID of the dataset
+                        //System.out.println("ID : "+id);
 			List columns = XPath.selectNodes(getDocument(), "/table/body/row[@id=\'"+id+"\']/column"); //select column names and data
 
 			String[]        data        = new String[columns.size()];
@@ -254,9 +255,9 @@ public final class XMLDatabaseTable{
 			int j = 0;
 
 			for(Object column : columns){
-				String name    = ((Element) column).getAttributeValue("name");
+				String fieldname    = ((Element) column).getAttributeValue("name");
 				data[j]        = ((Element) column).getText();
-				datacolumns[j] = findColumn(columnSet,name);
+				datacolumns[j] = findColumn(columnSet,fieldname);
 				j++;
 			}
 			result[i] = new XMLDataRow(id,datacolumns,data);
@@ -316,7 +317,7 @@ public final class XMLDatabaseTable{
 	 */
 	public void append(XMLDatabaseTable tab) throws JDOMException, Exception{
 		//append head
-
+                //System.out.println("Document :\n"+tab.toString());
 		XMLDataRow[] data = tab.getData();
 
 		//System.out.println(data[0].values[0]);

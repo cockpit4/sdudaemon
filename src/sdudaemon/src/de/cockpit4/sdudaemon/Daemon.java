@@ -77,6 +77,7 @@ public class Daemon {
 			if(Boolean.parseBoolean(xm.getXPathValue("/config/logging/@active"))){
 				Logger.getLogger("SystemLogger").addHandler(new FileHandler(xm.getXPathValue("/config/logging/@path")+Calendar.getInstance().getTime().toString()));
 			}
+                        
 
 			outputPath = xm.getXPathValue("//dump/@path");
 			statePath = xm.getXPathValue("//statefiles/@path");
@@ -84,16 +85,15 @@ public class Daemon {
 			Logger.getLogger("SystemLogger").setFilter(null);
 			Logger.getLogger("SystemLogger").setLevel(Level.ALL);
 			Logger.getLogger("SystemLogger").config("logger successfully initialized!");
-
 			List results = XPath.selectNodes(xm.getDocument(), "//projects/project/@path");
 			Logger.getLogger("SystemLogger").log(Level.CONFIG, "Projects found : {0}", results.size());
 			for(Object c : results){
 				if(c instanceof Attribute){
+                                        Logger.getLogger("SystemLogger").log(Level.INFO, "adding {0}", ((Attribute) c).getValue());
 					projects.add(new Configuration(((Attribute) c).getValue(),outputPath,statePath));
 				}
 			}
-
-			
+			Logger.getLogger("SystemLogger").log(Level.INFO, "adding project threads");
 			for(Configuration p : projects){
 				threads.add(new ExecutionQueue(p));
 			}
@@ -102,16 +102,15 @@ public class Daemon {
 			//register the additional plugins used by this project
 		}
 		catch (Exception ex) {
-			System.err.println("Fatal ERROR check configuration!\n"+ex);
-			ex.printStackTrace();
+                        Logger.getLogger("SystemLogger").log(Level.SEVERE, "Fatal ERROR check configuration!\n {0}", ex);
 		}
 		
 	}
 	/**This function starts the main execution of all decided and specified projects, set the active flag to false in the project configuration file.
 	 */
 	public void start(){
+                Logger.getLogger("SystemLogger").log(Level.INFO, "starting thread queues...");
 		for(ExecutionQueue q : threads){
-			System.out.println("Thread "+q.toString());
 			q.start();
 		}
 	}

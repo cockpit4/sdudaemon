@@ -95,14 +95,22 @@ public class RecyclerThread extends Thread {
 			int i = 0; //this will terminate the loop if there are no more files
 
 			while (!interrupted() && i < input.length) {
+                                Logger.getLogger("SystemLogger").log(Level.INFO, "Dispatching File {0}",input[i].getName());
 				synchronized (this) {
-
-					bsh.set("iteration", i);
-
-					if (input[i].isFile()) {
-						bsh.set("inputFile", input[i]);
-					}
-					bsh.eval(config.code);
+                                        if (input[i].isFile()) {
+                                            if(input[i].canRead()){
+                                                
+                                                bsh.set("iteration", i);
+                                                bsh.set("inputFile", input[i]);
+                                                bsh.eval(config.code);
+                                            }
+                                            else{
+                                                Logger.getLogger("SystemLogger").log(Level.WARNING, "Skipping file {0} because reading is not permitted!",input[i].getName());
+                                            }
+                                        }
+                                        else{
+                                            Logger.getLogger("SystemLogger").log(Level.INFO, "Skipping file {0} because it is an directory!",input[i].getName());
+                                        }
 
 
 					//System.out.println("DOCUMENT : \n"+resultDocument+"\n-----------------");
@@ -125,7 +133,7 @@ public class RecyclerThread extends Thread {
 
 			File[] outputFiles = (new File(config.outputPath)).listFiles();
 			XMLDatabaseTable finalFile = new XMLDatabaseTable(config.table,config.database);
-
+                        //System.out.println("Final File : \n"+finalFile);
 			for(File file : outputFiles){
 				if(file.isFile()){
 					System.out.println("Appending file "+file.getName()+" ...");
@@ -133,10 +141,11 @@ public class RecyclerThread extends Thread {
 				}
 			}
 
-			finalFile.writeFile(config.outputPath+".."+File.pathSeparator+"final-"+config.id+".xml");
+			finalFile.writeFile(config.outputPath+".."+File.separator+"final-"+config.id+".xml");
 		}
 		catch (EvalError ex) {
 			Logger.getLogger("SystemLogger").log(Level.SEVERE, null, ex);
+                        config.error=true;
 		}
 		catch (Exception ex) {
 			Logger.getLogger(RecyclerThread.class.getName()).log(Level.SEVERE, null, ex);

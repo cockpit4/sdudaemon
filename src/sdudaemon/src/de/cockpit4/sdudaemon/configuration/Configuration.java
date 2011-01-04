@@ -59,6 +59,7 @@ public class Configuration {
 	private ArrayList<UpdaterConfig> updater;
 	private String stateFilePath;
 	private String dumpFilePath;
+        private String projectName;
 
 	/**Create configuration and creating necessary project paths. All paths are requested to be writable and accessible. Exceptions are thrown otherwise.
 	 * @param configPath path to the project configuration
@@ -74,7 +75,7 @@ public class Configuration {
 		//load the project config file
 		Document doc = (new SAXBuilder()).build(new StringReader(XMLManipulator.readFileAsString(configPath)));
 		//get the project name
-		String projectName = ((Attribute) XPath.selectSingleNode(doc, "/config/@name")).getValue();
+		projectName = ((Attribute) XPath.selectSingleNode(doc, "/config/@name")).getValue();
 
 		//state document, stores the state of each part of this application
 		Document state;
@@ -168,7 +169,7 @@ public class Configuration {
 							String outputPath = ((Element) scr).getAttributeValue("output");
 							String path       = ((Element) scr).getAttributeValue("config");
 							scraper.add(new ScraperConfig(id, projectName, active, finished, error, path, outputPath));
-                                                        System.err.println("scraper added!");
+                                                        //System.err.println("scraper added!");
 						}
 
 					}
@@ -182,13 +183,13 @@ public class Configuration {
 							boolean error       = Boolean.parseBoolean(((Element) section).getAttributeValue("error"));
 
 							String database	    = ((Element) scr).getAttributeValue("database");
-                                                        System.out.println("database (recycler) "+database);
+                                                        //System.out.println("database (recycler) "+database);
 							String table	    = ((Element) scr).getAttributeValue("table");
 							String code         = ((Element) XPath.selectSingleNode(doc, "//recycler/recycler[@id=\'" + id + "\']/code")).getText();
 							String path         = ((Element) scr).getAttributeValue("path");
 							String output       = ((Element) scr).getAttributeValue("output");
 							RecyclerConfig conf = new RecyclerConfig(id,projectName, finished, active, error, path, output, code, table,database);
-							Logger.getLogger("SystemLogger").config(conf.toString());
+							
 							
 							//System.out.println(code);
 							recycler.add(conf);
@@ -209,7 +210,7 @@ public class Configuration {
 							String pass = ((Element) scr).getAttributeValue("password");
 							String file = ((Element) scr).getAttributeValue("file");
 							String db   = ((Element) scr).getAttributeValue("db");
-                                                        System.err.println("database = "+db);
+                                                        //System.err.println("database = "+db);
 							String table = ((Element) scr).getAttributeValue("table");
 							updater.add(new UpdaterConfig(id,host,port,user,pass,file,db,table,active,finished,error));
 						}
@@ -237,4 +238,10 @@ public class Configuration {
 	public ArrayList<UpdaterConfig> getUpdater() {
 		return updater;
 	}
+        /**Returns the Project Name for Debugging Reasons
+         * @return
+         */
+        public String getProjectName(){
+            return projectName;
+        }
 }

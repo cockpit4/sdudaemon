@@ -33,6 +33,8 @@ import de.cockpit4.sdudaemon.configuration.UpdaterConfig;
 import de.cockpit4.sdudaemon.threads.RecyclerThread;
 import de.cockpit4.sdudaemon.threads.ScraperThread;
 import de.cockpit4.sdudaemon.threads.UpdaterThread;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /** This class defines the execution queue of a scraping process
   *
@@ -55,10 +57,9 @@ public class ExecutionQueue extends Thread {
 		processes = new LinkedList<Thread>();
 
 		this.config = config;
-
-
+                Logger.getLogger("SystemLogger").log(Level.INFO, "initializing Execution Queue : {0}", config.getProjectName());
 		for (ScraperConfig a : config.getScrapers()) {
-			System.out.println("Adding scraper...");
+                        Logger.getLogger("SystemLogger").log(Level.INFO, "Adding scraper...");
 			if (a.active && !a.finished && !a.error) {
 				processes.offer(new ScraperThread(a));
 			}
@@ -66,7 +67,7 @@ public class ExecutionQueue extends Thread {
 
 
 		for (RecyclerConfig a : config.getRecyclers()) {
-			System.out.println("Adding recycler...");
+			Logger.getLogger("SystemLogger").log(Level.INFO, "Adding recycler...");
 
 			if (a.active && !a.finished && !a.error) {
 				processes.offer(new RecyclerThread(a));
@@ -74,7 +75,7 @@ public class ExecutionQueue extends Thread {
 		}
 
 		for (UpdaterConfig a : config.getUpdater()) {
-			System.out.println("Adding updater...");
+			Logger.getLogger("SystemLogger").log(Level.INFO, "Adding updater...");
 			if (a.active && !a.finished && !a.error) {
 				processes.offer(new UpdaterThread(a));
 			}
@@ -85,44 +86,65 @@ public class ExecutionQueue extends Thread {
 	 */
 	public void killQueue() {
 		//kills the ExecutionQueue
-		processes.peek().interrupt();
 
+		processes.peek().interrupt();
+                Logger.getLogger("SystemLogger").log(Level.WARNING, "Current Process interrupted!");
 		interrupt();
+                Logger.getLogger("SystemLogger").log(Level.WARNING,"Execution Queue interrupted!");
 	}
 
 	/**Life cycle of the execution queue this function runs through the queue and waits for each Sub-Thread to terminate.
 	 */
 	@Override
 	public void run() {
+                Logger.getLogger("SystemLogger").log(Level.INFO, "Execution Queue \"{0}\" running!", config.getProjectName());
 		while (!interrupted()) {
 			if (!processes.isEmpty()) { // here is our Work if there is no work kill yourself
 				try {
 					Thread t = processes.peek(); //get the lastes thread
-                                        
+					if (t instanceof ScraperThread) {
+                                            Logger.getLogger("SystemLogger").log(Level.FINE, "Scraping process started!");
+					}
+
+					if (t instanceof RecyclerThread) {
+                                            Logger.getLogger("SystemLogger").log(Level.FINE, "Recycling process started!");
+					}
+
+					if (t instanceof UpdaterThread) {
+                                            Logger.getLogger("SystemLogger").log(Level.FINE, "Updating process started!");
+					}
+
 					t.start(); //start it
 					t.join(); //wait for it to die
 
 					//TODO :(Minor) Dispatch configs and save them into the save file
 					if (t instanceof ScraperThread) {
+                                            Logger.getLogger("SystemLogger").log(Level.FINER, "Scraping process started!");
 					}
 
 					if (t instanceof RecyclerThread) {
+                                            Logger.getLogger("SystemLogger").log(Level.FINER, "Recycling process started!");
 					}
 
 					if (t instanceof UpdaterThread) {
+                                            Logger.getLogger("SystemLogger").log(Level.FINER, "Updating process started!");
 					}
 
 					processes.poll();//make space for the next job...
 				}
 				catch (InterruptedException ex) {
+                                        Logger.getLogger("SystemLogger").log(Level.SEVERE, "Current Process interrupted!");
 					System.out.println(ex);
 					interrupt();
+                                        return;
 				}
 			}
 			else {
-                                
+                                Logger.getLogger("SystemLogger").log(Level.FINEST, "Execution Queue {0} successfully.",config.getProjectName());
 				interrupt();
+                                return;
 			}
 		}
+                
 	}
 }
