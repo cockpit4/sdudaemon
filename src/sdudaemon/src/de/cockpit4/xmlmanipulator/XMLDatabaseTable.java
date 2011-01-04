@@ -53,7 +53,7 @@ public final class XMLDatabaseTable{
 	 * @param name name of the table
 	 */
 	public XMLDatabaseTable(String name, String db) throws Exception{
-		this.db = db;
+		this.db   = db;
 		this.name = name;
 		xm = new XMLManipulator("");
 		xm.addXPathNode("/table[@name=\'"+name+"\'][@database=\'"+db+"\']", "");

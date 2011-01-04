@@ -55,7 +55,7 @@ public class UpdaterThread extends Thread{
 			loader = new XMLDatabaseLoader(conf.host, conf.port,conf.user,conf.pass,new XMLDatabaseTable(conf.inputFile));
 		}
 		else{
-			loader = new XMLDatabaseLoader(conf.host, conf.port,conf.user,conf.pass,new XMLDatabaseTable(conf.db,conf.table));
+			loader = new XMLDatabaseLoader(conf.host, conf.port,conf.user,conf.pass,new XMLDatabaseTable(conf.table,conf.db));
 		}
 	}
 	/**running function, here the thread loads inserts and updated row in the table. If the table is nonexistent this function creates a new based on the data found in the path, the recycler used to store its output.

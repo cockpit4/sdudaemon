@@ -150,7 +150,7 @@ public class Configuration {
 		for (String a : sections) {
 			//get Nodes from the document
 			// "//scraper/scraper" gets all scrapers found in the state file
-
+                        
 			List nodes = XPath.selectNodes(state, "//" + a + "/" + a);
 
 			for (Object section : nodes) { // now iterate through all existing nodes of the path created above
@@ -168,6 +168,7 @@ public class Configuration {
 							String outputPath = ((Element) scr).getAttributeValue("output");
 							String path       = ((Element) scr).getAttributeValue("config");
 							scraper.add(new ScraperConfig(id, projectName, active, finished, error, path, outputPath));
+                                                        System.err.println("scraper added!");
 						}
 
 					}
@@ -181,6 +182,7 @@ public class Configuration {
 							boolean error       = Boolean.parseBoolean(((Element) section).getAttributeValue("error"));
 
 							String database	    = ((Element) scr).getAttributeValue("database");
+                                                        System.out.println("database (recycler) "+database);
 							String table	    = ((Element) scr).getAttributeValue("table");
 							String code         = ((Element) XPath.selectSingleNode(doc, "//recycler/recycler[@id=\'" + id + "\']/code")).getText();
 							String path         = ((Element) scr).getAttributeValue("path");
@@ -192,7 +194,6 @@ public class Configuration {
 							recycler.add(conf);
 						}
 					}
-					//TODO: add updater too
 					
 					if(((Element) section).getName().equals(sections[2])){//updater
 						scr = XPath.selectSingleNode(doc, "//"+a+"/"+a+"[@id=\'"+((Element) section).getAttributeValue("id")+"\']"); //get some attributes of node where id = ...
@@ -208,6 +209,7 @@ public class Configuration {
 							String pass = ((Element) scr).getAttributeValue("password");
 							String file = ((Element) scr).getAttributeValue("file");
 							String db   = ((Element) scr).getAttributeValue("db");
+                                                        System.err.println("database = "+db);
 							String table = ((Element) scr).getAttributeValue("table");
 							updater.add(new UpdaterConfig(id,host,port,user,pass,file,db,table,active,finished,error));
 						}

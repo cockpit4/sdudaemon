@@ -73,7 +73,6 @@ public class ExecutionQueue extends Thread {
 			}
 		}
 
-
 		for (UpdaterConfig a : config.getUpdater()) {
 			System.out.println("Adding updater...");
 			if (a.active && !a.finished && !a.error) {
@@ -99,7 +98,7 @@ public class ExecutionQueue extends Thread {
 			if (!processes.isEmpty()) { // here is our Work if there is no work kill yourself
 				try {
 					Thread t = processes.peek(); //get the lastes thread
-
+                                        
 					t.start(); //start it
 					t.join(); //wait for it to die
 
@@ -121,6 +120,7 @@ public class ExecutionQueue extends Thread {
 				}
 			}
 			else {
+                                
 				interrupt();
 			}
 		}

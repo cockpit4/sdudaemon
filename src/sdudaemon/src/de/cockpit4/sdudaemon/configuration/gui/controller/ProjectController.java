@@ -22,6 +22,9 @@ THE SOFTWARE.
 
 package de.cockpit4.sdudaemon.configuration.gui.controller;
 
+import de.cockpit4.sdudaemon.configuration.RecyclerConfig;
+import de.cockpit4.sdudaemon.configuration.ScraperConfig;
+import de.cockpit4.sdudaemon.configuration.UpdaterConfig;
 import de.cockpit4.sdudaemon.configuration.gui.model.Project;
 import de.cockpit4.sdudaemon.configuration.gui.model.eventhandling.AbstractObservableModel;
 import de.cockpit4.sdudaemon.configuration.gui.model.eventhandling.ModelChangeListener;
@@ -29,8 +32,13 @@ import de.cockpit4.sdudaemon.tool.ToolHelper;
 import de.cockpit4.xmlmanipulator.XMLManipulator;
 import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.jdom.Element;
+import org.jdom.Namespace;
+import org.jdom.xpath.XPath;
 
 /**
  *
@@ -117,7 +125,97 @@ public class ProjectController extends AbstractObservableModel implements ModelC
     }
 
     public void load(){
-        
+        File projectConfig = new File(model.getPath());
+
+        if(projectConfig.exists()){ //exists ? no it will be created propably soon
+            if(projectConfig.canRead()){
+                try {
+                    XMLManipulator xm = new XMLManipulator(XMLManipulator.readFileAsString(model.getPath()));
+                    //public ScraperConfig(int id,
+                    //                  String projectName,
+                    //                  boolean active,
+                    //                  boolean finished,
+                    //                  boolean error, String configPath,
+                    //                  String outputPath)
+                    //
+                    List project = XPath.selectNodes(xm.getDocument(), "/config/scraper/scraper");
+                    Element e;
+                    for(Object node : project){
+                        e = (Element) node;
+                        ScraperConfig s = new ScraperConfig(Integer.parseInt(e.getAttributeValue("id")),
+                                                               e.getAttributeValue("name"),
+                                                               Boolean.parseBoolean(e.getAttributeValue("active")),
+                                                               false,
+                                                               false,
+                                                               e.getAttributeValue("config"),
+                                                               e.getAttributeValue("output"));
+                        model.addScraper(s);
+                        
+                    }
+                    /*public RecyclerConfig(int id,
+                                            String projectName,
+                                            boolean fin,
+                                            boolean act,
+                                            boolean error,
+                                            String path,
+                                            String output,
+                                            String code,
+                                            String table,
+                                            String database){*/
+                    project = XPath.selectNodes(xm.getDocument(), "/config/recycler/recycler");
+                    for(Object node : project){
+                        e = (Element) node;
+                        RecyclerConfig r = new RecyclerConfig(Integer.parseInt(e.getAttributeValue("id")),
+                                                            null,
+                                                            false,
+                                                            true,
+                                                            false,
+                                                            e.getAttributeValue("path"),
+                                                            e.getAttributeValue("output"),
+                                                            e.getChild("code").getText(),
+                                                            e.getAttributeValue("table"),
+                                                            e.getAttributeValue("database"));
+                        model.addRecycler(r);
+                    }
+
+                    /*public UpdaterConfig(int id,
+                                        String host,
+                                        String port,
+                                        String user,
+                                        String pass,
+                                        String inputFile,
+                                        String db,
+                                        String table,
+                                        boolean act,
+                                        boolean fin,
+                                        boolean err)*/
+                    project = XPath.selectNodes(xm.getDocument(), "/config/updater/updater");
+                    for(Object node : project){
+                        e = (Element) node;
+                        UpdaterConfig u = new UpdaterConfig(Integer.parseInt(e.getAttributeValue("id")),
+                                                            e.getAttributeValue("host"),
+                                                            e.getAttributeValue("port"),
+                                                            e.getAttributeValue("user"),
+                                                            e.getAttributeValue("password"),
+                                                            e.getAttributeValue("file"),
+                                                            e.getAttributeValue("db"),
+                                                            e.getAttributeValue("table"),
+                                                            true,
+                                                            false,
+                                                            false);
+                    }
+                }
+                catch (Exception ex) {
+                    Logger.getLogger(ProjectController.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+            else{
+                //Throw some exception
+            }
+        }
+        else{
+            //Do nothing and wait for the file to be created
+        }
     }
 
     public void onChange() {

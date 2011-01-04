@@ -650,7 +650,7 @@ public class ConfigurationWindow extends javax.swing.JFrame implements ModelChan
     }//GEN-LAST:event_btnGenerateShellActionPerformed
 
     private void btnProjectAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnProjectAddActionPerformed
-        Project proj = new Project(false, "name", "/path/to/project/config.file");
+        Project proj = new Project(false, "", "");
         configControll.getModel().getProjects().addProject(proj);
         editor.setEdition(proj);
         proj.addListener(editor);

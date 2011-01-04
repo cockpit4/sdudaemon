@@ -53,12 +53,12 @@ public class RecyclerThread extends Thread {
 		bsh.setOut(System.out);
 		bsh.setErr(System.err);
 
-		File output = new File(config.outputPath + config.projectName + File.pathSeparator + "recycler"+File.pathSeparator + config.id + File.pathSeparator);
+		File output = new File(config.outputPath  + File.separator + "recycler"+File.separator + config.id + File.separator);
 		if (!output.exists()) {
 			output.mkdirs();
 		}
 
-		config.outputPath = output.getAbsolutePath() + File.pathSeparator;
+		config.outputPath = output.getAbsolutePath() + File.separator;
 		Logger.getLogger("SystemLogger").log(Level.CONFIG, "output Path:{0}", config.outputPath);
 	}
 
@@ -86,7 +86,7 @@ public class RecyclerThread extends Thread {
 
 			Logger.getLogger("SystemLogger").log(Level.CONFIG, "new Configuration : {0}", config.outputPath);
 
-
+                        System.err.println("Database in recycler Thread : "+config.database);
 			resultDocument = new XMLDatabaseTable(config.table, config.database);
 
 
