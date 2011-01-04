@@ -33,7 +33,6 @@ import org.jdom.xpath.XPath;
 import de.cockpit4.sdudaemon.configuration.Configuration;
 import de.cockpit4.sdudaemon.execute.ExecutionQueue;
 import de.cockpit4.xmlmanipulator.XMLManipulator;
-import java.util.logging.Handler;
 import org.webharvest.definition.DefinitionResolver;
 
 /**
