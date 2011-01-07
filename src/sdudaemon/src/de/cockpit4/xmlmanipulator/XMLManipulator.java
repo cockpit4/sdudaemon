@@ -215,6 +215,8 @@ public class XMLManipulator{
 			result = null;
 		}
 
+                //System.out.println("value "+value);
+
 		boolean	relative  = xpath.substring(0,2).equals("//"); // determine whether an xpath is absolut or relativ
 
 		if(relative){

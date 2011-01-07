@@ -50,4 +50,14 @@ public class XMLDataRow {
 		this.columnsNames = columns;
 		this.values = data;
 	}
+
+        public String toString(){
+            String res = "id : "+id+"\n";
+            for(int i = 0 ; i<values.length;i++){
+                res += columnsNames[i].name + " : "+values[i]+"\n";
+            }
+
+
+            return res;
+        }
 }

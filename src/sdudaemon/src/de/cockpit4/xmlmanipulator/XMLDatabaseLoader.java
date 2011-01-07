@@ -120,6 +120,7 @@ public class XMLDatabaseLoader {
 			}
 			else{ //Table drop it
 				//System.out.println("Table exists dropping it ...");
+				//TODO: (Blocker) make ID a serial stop dropping tables and check for existing values
 				sql.execute("DROP TABLE "+data.getDatabaseName()+"."+data.getTableName()+";");
 
 				String query = "CREATE TABLE "+data.getDatabaseName()+"."+data.getTableName()+" (id int,";

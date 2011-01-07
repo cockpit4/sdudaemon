@@ -39,14 +39,19 @@ public class XPathDissembler{
 	private boolean pointsToAttribute = false;
 
 	public static void main(String[] argV) throws Exception{
-            String bla = "/config/projects[@id='2'][@path='/a/mmg/']/test/bla/suelz";
+            String bla = "/config/projects[@id='2'][@path='/a/mmg/']/test/bla/suelz::text()";
 
             
-	    //System.err.println("Entered : "+bla);
+	    System.err.println("Entered : "+bla);
 
 	    XPathDissembler xd = new XPathDissembler(bla);
+            
+            for(int i = 0 ; i<xd.getPathDepth(); i++){
+                System.out.println(xd.getNode(i).getName());
+            }
 
-	    //System.err.println("reconstructed : "+xd.composePathOf(xd.getPathDepth()-1, bla.matches("^([/]{1,2})?")));
+
+	    System.err.println("reconstructed : "+xd.composePathOf(xd.getPathDepth()-1, bla.matches("^([/]{1,2})?")));
 	}
         
         //solving the path separator problem by simple character stuffing
@@ -84,8 +89,8 @@ public class XPathDissembler{
 
 		String xpreg_start    = "^([/]{1,2})?"; // match / or // at the begin of a path sequence
 		String xpreg_attr     = "(@[A-Za-z]+[0-9]*[-]*[:]*[A-Za-z0-9]+)";   // match an single attribute like : //@style or @dt:dt
-		String xpreg_node     = "[A-Za-z]+[0-9]*[-]*[A-Za-z0-9]*";       // a node without an predicate like : //body
-		String xpreg_node_pre = "(\\[@[A-Za-z]+[0-9]*[-]*[:]*[A-Za-z0-9]*[=][\\'][A-Za-z0-9-./\\\\:\\.]*\\'\\])?"; //or an node with an predicate like : //body[@id='body0']
+		String xpreg_node     = "[A-Za-z]+[0-9]*[-]*[:]*[A-Za-z0-9]*(\\(\\))?";       // a node without an predicate like : //body and //body/child::text()
+		String xpreg_node_pre = "(\\[@[A-Za-z]+[0-9]*[-]*[:]*[A-Za-z0-9]*[=][\\'][A-Za-z0-9-./\\\\:\\.\\(\\)]*\\'\\])?"; //or an node with an predicate like : //body[@id='body0']
 		String xpreg_node_num = "(\\[([0-9]+)\\])"; // or a node with number quantifier like : //table/tr[10]
                 
                 //deprecated! --v

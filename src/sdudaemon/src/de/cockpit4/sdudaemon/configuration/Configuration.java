@@ -83,6 +83,7 @@ public class Configuration {
 		//Dumpdir and Statedir creation
 		//
 		File stateDir = new File(statePath + projectName); //project state directory
+                Logger.getLogger("SystemLogger").log(Level.INFO, "Saving statefile {0}",statePath + projectName + "/state.xml");
 		File stateFile = new File(statePath + projectName + "/state.xml"); //project  state file
 		File dumpDir = new File(dumpPath); //where to store outputs of the project parts
 

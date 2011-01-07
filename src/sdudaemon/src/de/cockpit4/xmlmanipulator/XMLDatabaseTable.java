@@ -48,6 +48,7 @@ public final class XMLDatabaseTable{
 	private XMLManipulator xm;
 	private String name;
 	private String db;
+        private int datalength = 0;
 	/**Constructor creating a new empty XML-Database Table
 	 * @param db name of the target database
 	 * @param name name of the table
@@ -77,6 +78,7 @@ public final class XMLDatabaseTable{
 	public void addColumn(String name,String type) throws JDOMException{
 		if(!xm.nodeExists("/table/head/column[@name=\'"+name+"\']")){
                     try {
+                        //System.out.println("Document "+xm);
                         xm.addXPathNode("/table/head/column[@name=\'" + name + "\'][@type=\'" + type + "\']", "");
                     } catch (IllegalArgumentException ex) {
                         Logger.getLogger(XMLDatabaseTable.class.getName()).log(Level.SEVERE, null, ex);
@@ -85,6 +87,27 @@ public final class XMLDatabaseTable{
                     }
 		}
 	}
+
+        public void addColumns(XMLDataColumn[] columns) throws JDOMException{
+            if(columns!=null){
+                for(XMLDataColumn c : columns){
+                    //System.out.println(" name :"+c.name+" type : "+c.type);
+                    addColumn(c.name, c.type);
+                }
+            }
+        }
+
+        /**Counts the data sets stored in this database
+         * @return count of Datarows stored in this table
+         */
+        public int getSize(){
+           try {
+            datalength = XPath.selectNodes(getDocument(), "/table/body/row").size();
+            } catch (JDOMException ex) {
+                Logger.getLogger(XMLDatabaseTable.class.getName()).log(Level.SEVERE, null, ex);
+            }
+           return datalength;
+        }
 
 	/**creates a non-existent row value, or updates it if it exists
 	 * a none existend column will also be added to the table head.
@@ -96,7 +119,7 @@ public final class XMLDatabaseTable{
 		//exists the column ? no => throw exception
 		//does the row id not exists create a new row
 		//does the row exist insert a new one
-
+                //System.out.println("id : "+id+" column : "+column.name+" type : "+column.type+" value : "+value);
 		if( xm.nodeExists("/table/body/row[@id=\'"+id+"\']/column[@name=\'"+column.name+"\']")  ){
 			//node Exists
 			xm.setXPathValue("/table/body/row[@id=\'"+id+"\']/column[@name=\'"+column.name+"\']", value);
@@ -163,9 +186,54 @@ public final class XMLDatabaseTable{
 	 * @param column checking for keeping data
 	 * @return true if column at id is not empty
 	 */
-	public boolean isSet(int id, String column){
+	public boolean isSet(int id, String column) throws JDOMException, Exception{
+                XMLDataColumn[] cols = getXMLDataColumns();
+                if(hasColumn(column)){
+                    if(hasRow(id)){
+                        return xm.getXPathValue("/table/body/row[@id=\'"+id+"\']/column[@name=\'"+column+"\']") != null;
+                    }
+                }
 		return false;
 	}
+        /**Returns the XMLDataColumn object assigned to name
+         * @param name name of the column
+         * @return XMLDataColumn assigned to name, null if this column does not exist.
+         * @throws JDOMException 
+         * @throws Exception
+         */
+        public XMLDataColumn getColumn(String name) throws JDOMException, Exception{
+            if(xm.nodeExists("/table/head/column[@name=\'"+name+"\']")){
+                return new XMLDataColumn(name, xm.getXPathValue("/table/head/column[@name=\'"+name+"\']/@type"));
+            }
+            return null;
+        }
+        /**Returns the XMLDataRow Object assigned to id
+         * @param id of the data row
+         * @return null if datarow does not exist, The Data Row Object if it does
+         */
+        public XMLDataRow getRow(int id){
+            try {
+                if (hasRow(id)) {
+                    List columns = XPath.selectNodes(getDocument(), "/table/body/row[@id="+id+"]/column");
+                    XMLDataColumn[] columnNames = new XMLDataColumn[columns.size()];
+                    String[] data = new String[columns.size()];
+
+                    int i = 0;
+
+                    for(Object o : columns){
+                        columnNames[i] = getColumn(((Element )o).getAttributeValue("name"));
+                        data[i] = ((Element )o).getText();
+                        i++;
+                    }
+                    return new XMLDataRow(id, columnNames, data);
+                }
+            } catch (Exception ex) {
+                Logger.getLogger("SystemLogger").log(Level.SEVERE, null, ex);
+                return null;
+            }
+            return null;
+        }
+
 	/**Returns the database name of the XML Database
 	 * @return name of the database
 	 */
@@ -191,10 +259,10 @@ public final class XMLDatabaseTable{
 		XMLDataColumn[] result = new XMLDataColumn[columns.size()]; //create a new array keeping the result
 
 		for(int i = 0 ; i<columns.size(); i++){ //iterate through and assing each name to its type
-			String name = ((Element) columns.get(i)).getAttributeValue("name");
+			String cname = ((Element) columns.get(i)).getAttributeValue("name");
 			String type = ((Element) columns.get(i)).getAttributeValue("type");
 			
-			result[i] = new XMLDataColumn(name,type); //Create a new data column
+			result[i] = new XMLDataColumn(cname,type); //Create a new data column
 		}
 
 		return result; //return the final array
@@ -381,21 +449,30 @@ public final class XMLDatabaseTable{
 	/**Standalone testing function
 	 */
 	public static void main(String[] argV) throws Exception{
+            XMLDatabaseTable table =  new XMLDatabaseTable("test","db");
+            System.out.println(table.toString());
+            XMLDataColumn[] cols = new XMLDataColumn[3];
+            cols[0]=new XMLDataColumn("name", "varchar(20)");
+            cols[1]=new XMLDataColumn("surname", "varchar(20)");
+            cols[2]=new XMLDataColumn("adress", "varchar(100)");
 
-		XMLDatabaseTable td1 = new XMLDatabaseTable(argV[0]);
-		XMLDatabaseTable td2 = new XMLDatabaseTable(argV[1]);
+            table.addColumns(cols);
 
-		//System.out.println(" DOCUMENT 1 : \n"+td1+"\n-----------------------");
-		//System.out.println(" DOCUMENT 2 : \n"+td1+"\n-----------------------");
-		try{
-			System.out.println("Appending ...");
-			td1.append(td2);
-		}catch(Exception e){
-			e.printStackTrace();
-		}
+            XMLDataRow[] rows = new XMLDataRow[2];
+            String[] data = new String[3];
+            data[0]="test";
+            data[1]="surtest";
+            data[2]="testaddress";
+            rows[0] = new XMLDataRow(0, cols, data);
 
-		td1.writeFile("test.xml");
-		//System.out.println(" RESULTING DOCUMENT : \n"+td1+"\n-----------------------");
+
+            data[0]="test second";
+            data[1]="surtest second";
+            data[2]="testaddress second";
+            rows[1] = new XMLDataRow(1, cols, data);
+            table.insertValues(rows);
+
+            System.out.println(table.getRow(0));
 	}
 }
 

@@ -27,6 +27,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import de.cockpit4.sdudaemon.configuration.RecyclerConfig;
 import bsh.Interpreter;
+import bsh.This;
+import de.cockpit4.sdudaemon.tool.FileSorter;
 import java.io.File;
 import de.cockpit4.xmlmanipulator.XMLDatabaseTable;
 
@@ -62,6 +64,18 @@ public class RecyclerThread extends Thread {
 		Logger.getLogger("SystemLogger").log(Level.CONFIG, "output Path:{0}", config.outputPath);
 	}
 
+        public class FileSortTreeNode{
+            public File data;
+            public FileSortTreeNode left;
+            public FileSortTreeNode right;
+
+            public FileSortTreeNode(File data){
+                this.data = data;
+                left=null;
+                right=null;
+            }
+        }
+
 	/**This function contains the main code to perform transformation from scraper output to updater input<br>
 	 * So the input is a directory, containing your files. The output is an XML-Object accessible through the XMLManipulator object "resultDocument", which will be written into the output path under the name choosen by you. The algorithm checks if there is a preexistent file. So this process might be interrupted and resumed anytime.
 	 * This actually is bean shell code so you are flexible to tell the Program how to transform you data<br>
@@ -81,20 +95,30 @@ public class RecyclerThread extends Thread {
 	public void run() {
 		try {
 			Logger.getLogger("SystemLogger").log(Level.CONFIG, "loading : {0}", config.scrapeyardPath);
-			File[] input = (new File(config.scrapeyardPath)).listFiles(); // this is what we transform. The files in your specified directory
+			File[] input = new FileSorter((new File(config.scrapeyardPath)).listFiles()).byDate(); // this is what we transform. The files in your specified directory
 			XMLDatabaseTable resultDocument;
 
 			Logger.getLogger("SystemLogger").log(Level.CONFIG, "new Configuration : {0}", config.outputPath);
 
                         //System.err.println("Database in recycler Thread : "+config.database);
-			resultDocument = new XMLDatabaseTable(config.table, config.database);
-
+                        int i;
+                        int datasets;
+                        if(XMLDatabaseTable.tableExists(config.outputPath+".."+File.separator+"final-"+config.id+".xml")){
+                            resultDocument = new XMLDatabaseTable(config.outputPath+".."+File.separator+"final-"+config.id+".xml");
+                            i = resultDocument.getSize();
+                            datasets = i;
+                        }
+                        else{
+                            resultDocument = new XMLDatabaseTable(config.table, config.database);
+                            i = 0;
+                            datasets = 0;
+                        }
 
 			bsh.set("resultDocument", resultDocument);
 			bsh.set("steps", input.length);
-			int i = 0; //this will terminate the loop if there are no more files
+			
 
-			while (!interrupted() && i < input.length) {
+			while (!interrupted() && i < (input.length)) {
                                 Logger.getLogger("SystemLogger").log(Level.INFO, "Dispatching File {0}",input[i].getName());
 				synchronized (this) {
                                         if (input[i].isFile()) {
