@@ -84,6 +84,8 @@ public class XPathDissembler{
 		//check if xpath maches an xpath expression
 		//XPath RegExp 
 		//
+                //System.out.println("XPath : "+xpath);
+
 		this.xpath = prepareString(xpath);
 		nodes = new ArrayList<XPathNode>();
 
@@ -104,11 +106,11 @@ public class XPathDissembler{
 
 		String[] tokens = this.xpath.split("/-"); // split the path into partial strings for dispatching
 		if(tokens.length>0){
-			for(String s : tokens){
-				if(s.length()>0){
-					//System.out.println("Token : "+s);
-				}
-			}
+//			for(String s : tokens){
+//				if(s.length()>0){
+//					System.out.println("Token : "+s);
+//				}
+//			}
 
 			for(String s : tokens){
 				if(s.length()>0){

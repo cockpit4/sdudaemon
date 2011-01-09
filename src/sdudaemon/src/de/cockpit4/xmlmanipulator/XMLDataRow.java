@@ -40,6 +40,8 @@ public class XMLDataRow {
 	/**values for each column its an 1:1 map to columns which means column[0] is assigned to values[0]
 	 */
 	public String[] values;
+
+        public String checksum;
 	/**Constructor assigning column descriptions data to a table row with id
 	 * @param id id of the data row
 	 * @param columns columns to assign
@@ -50,7 +52,50 @@ public class XMLDataRow {
 		this.columnsNames = columns;
 		this.values = data;
 	}
+        /** creates a new Data Row object with a specified checksum
+         * @param id of the data set
+         * @param columns assigned to
+         * @param data values to store
+         * @param checksum over the datavalue specified by the index columns
+         */
+	public XMLDataRow(int id, XMLDataColumn[] columns, String[] data, String checksum){
+		this.id = id;
+		this.columnsNames = columns;
+		this.values = data;
+	}
+        /**Returns the data assigned to a specified column
+         * @param col column to retrieve the data from
+         * @return null if column does not exist, the value string otherwise
+         */
+        public String getData(XMLDataColumn col){
+            int i = 0;
+            for(XMLDataColumn c : columnsNames){
+                //System.err.println("XMLDataRow.getData(XMLDataColumn) : columnnames : "+c.name);
+                //System.err.println("XMLDataRow.getData(XMLDataColumn) : columnname: "+col.name);
+                if(c.name.equals(col.name)){
+                    //System.err.println("Value fits!");
+                    return values[i];
+                }
+                i++;
+            }
 
+            return null;
+        }
+
+        public String getData(String col){
+            int i = 0;
+            for(XMLDataColumn c : columnsNames){
+                if(c.name.equals(col)){
+                    return values[i];
+                }
+                i++;
+            }
+
+            return null;
+        }
+        /* (no-javadoc)
+         * @see java.lang.Object.toString()
+         */
         public String toString(){
             String res = "id : "+id+"\n";
             for(int i = 0 ; i<values.length;i++){

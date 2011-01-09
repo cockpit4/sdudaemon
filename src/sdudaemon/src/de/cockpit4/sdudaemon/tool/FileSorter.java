@@ -34,34 +34,6 @@ public class FileSorter {
         return res;
     }
 
-    private static void quicksort(Sortable[] numbers, int low, int high) {
-        int i = low, j = high;
-        Sortable pivot = numbers[(low + high) / 2];
-
-        while (i <= j) {
-
-            while (numbers[i].lesserThan(pivot)) {
-                i++;
-            }
-
-            while (numbers[j].greaterThan(pivot)) {
-                j--;
-            }
-
-            if (i <= j) {
-                numbers[i].swap(numbers[j]);
-                i++;
-                j--;
-            }
-        }
-
-        if (low < j) {
-            quicksort(numbers, low, j);
-        }
-        if (i < high) {
-            quicksort(numbers, i, high);
-        }
-    }
 
     public File[] getFiles() {
         return getFilesArray();
@@ -69,19 +41,19 @@ public class FileSorter {
 
     public File[] byName() {
         SortableFile.sortMode = 0;
-        quicksort(files, 0, files.length-1);
+        ToolHelper.quicksort(files, 0, files.length-1);
         return getFiles();
     }
 
     public File[] byDate() {
         SortableFile.sortMode = 1;
-        quicksort(files, 0, files.length-1);
+        ToolHelper.quicksort(files, 0, files.length-1);
         return getFiles();
     }
 
     public File[] bySize(){
         SortableFile.sortMode = 2;
-        quicksort(files, 0, files.length-1);
+        ToolHelper.quicksort(files, 0, files.length-1);
         return getFiles();
     }
 

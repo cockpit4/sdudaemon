@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2010 cockpit4, Kevin Krüger
+Copyright (c) 2011 cockpit4, Kevin Krüger
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -24,8 +24,7 @@ package de.cockpit4.sdudaemon.tool;
 
 import java.io.File;
 
-/**
- *
+/**Helper class containing several reusable functions
  * @author kneo
  */
 public class ToolHelper {
@@ -45,4 +44,55 @@ public class ToolHelper {
         }while(parent!=null); //stop if the root appears
         return false;
     }
+
+    /**Generalized quicksort algorithm using Sortable arrays
+     * @param numbers sortable elements
+     * @param low lower index
+     * @param high higher index
+     */
+    public static void quicksort(Sortable[] numbers, int low, int high) {
+        int i = low, j = high;
+        Sortable pivot = numbers[(low + high) / 2];
+
+        while (i <= j) {
+
+            while (numbers[i].lesserThan(pivot)) {
+                i++;
+            }
+
+            while (numbers[j].greaterThan(pivot)) {
+                j--;
+            }
+
+            if (i <= j) {
+                numbers[i].swap(numbers[j]);
+                i++;
+                j--;
+            }
+        }
+
+        if (low < j) {
+            quicksort(numbers, low, j);
+        }
+        if (i < high) {
+            quicksort(numbers, i, high);
+        }
+    }
+
+        /**Returns the hexadecimal string representation of a by
+         * @param c byte to transform
+         * @return representation of this byte. Like : AB or 3C
+         */
+	public static String byteToHex(byte c){
+		int l = (c & 0x0f);
+		int h = (c & 0xf0) >> 4;
+		char H;
+		char L;
+
+		H=h<0x0A ? (char)(0x30+h) : (char)(0x41+(h-0x0A));
+		L=l<0x0A ? (char)(0x30+l) : (char)(0x41+(l-0x0A));
+		return ""+H+L;
+	}
+
+
 }

@@ -37,8 +37,6 @@ The early (pre pre pre alpha) version of this project has some limitations.
 
 Known Issues
 ============
-- nasty memory leak crashing the JVM in combination with a project plugin
-- huge memory usage while adapting data. Caused by the JDOM XML Framework
 - No XML-Validers
 - XML-Dispatching (lot of work to do here)
 - Lots of runtime errors

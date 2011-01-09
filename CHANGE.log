@@ -1,3 +1,13 @@
+9.1.2011 - Version 0.3
++ Added Project editor
++ Added installer
++ Began to develop a datamodel for project editor
++ Started to develop a consistency model for database tables
++ Started to develop a XML based database management system
++ Fixed and enhanced logging 
++ added a better XPath Dissembler more tolerant now
++ added function to store binary objects in XML files
+
 30.11.2010 - Version 0.2
 + GUI Configurator nealy finished, generates shellscripts only batch files will follow.
 + Started to create a simple project editor, it has become more complex than intended. But it is as it is
