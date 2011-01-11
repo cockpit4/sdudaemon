@@ -49,7 +49,7 @@ public class XMLManipulator{
 	*Constructor loads a xml formated String as Document
 	*@param xmlContent String to load. Make sure it is wellformed XML
 	*/
-	public XMLManipulator(String xmlContent) throws Exception{
+	public XMLManipulator(String xmlContent) throws JDOMException, IOException{
 		//System.out.println("creating object and loading XML Document...");
 		//System.out.println("XML-CONTENT:\n"+xmlContent+"\n-------");
 		

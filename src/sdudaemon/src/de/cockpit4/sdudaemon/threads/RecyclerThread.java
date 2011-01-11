@@ -29,6 +29,7 @@ import de.cockpit4.sdudaemon.configuration.RecyclerConfig;
 import bsh.Interpreter;
 import bsh.This;
 import de.cockpit4.sdudaemon.tool.FileSorter;
+import de.cockpit4.xmlmanipulator.XMLDatabaseManager;
 import java.io.File;
 import de.cockpit4.xmlmanipulator.XMLDatabaseTable;
 
@@ -97,6 +98,7 @@ public class RecyclerThread extends Thread {
 			Logger.getLogger("SystemLogger").log(Level.CONFIG, "loading : {0}", config.scrapeyardPath);
 			File[] input = new FileSorter((new File(config.scrapeyardPath)).listFiles()).byDate(); // this is what we transform. The files in your specified directory
 			XMLDatabaseTable resultDocument;
+                        XMLDatabaseManager resDatabase = new XMLDatabaseManager(config.outputPath);
 
 			Logger.getLogger("SystemLogger").log(Level.CONFIG, "new Configuration : {0}", config.outputPath);
 
@@ -114,7 +116,8 @@ public class RecyclerThread extends Thread {
                             datasets = 0;
                         }
 
-			bsh.set("resultDocument", resultDocument);
+			//bsh.set("resultDocument", resultDocument);
+                        bsh.set("resultDatabase", resultDocument);
 			bsh.set("steps", input.length);
 			
 
@@ -123,7 +126,7 @@ public class RecyclerThread extends Thread {
 				synchronized (this) {
                                         if (input[i].isFile()) {
                                             if(input[i].canRead()){
-                                                
+                                                bsh.set("syslog", Logger.getLogger("SystemLogger"));
                                                 bsh.set("iteration", i);
                                                 bsh.set("inputFile", input[i]);
                                                 bsh.eval(config.code);
@@ -140,33 +143,34 @@ public class RecyclerThread extends Thread {
 					//System.out.println("DOCUMENT : \n"+resultDocument+"\n-----------------");
 
 					i++;
-				}//TODO : change below such that projectname is part of the filename
+				}
 				if (i % 1000 == 0 && i > 0) {
 					resultDocument = (XMLDatabaseTable) bsh.get("resultDocument");
 					//Finalize document add hash values to each row ...
-					resultDocument.writeFile(config.outputPath + (i / 1000) + ".xml");
+					/*resultDocument.writeFile(config.outputPath + (i / 1000) + ".xml");
 					resultDocument = new XMLDatabaseTable(config.table, config.database);
-					bsh.set("resultDocument", resultDocument);
+					bsh.set("resultDocument", resultDocument);*/
+                                        resDatabase.store();
 				}
 			}
 			
-			resultDocument = (XMLDatabaseTable) bsh.get("resultDocument");
-			resultDocument.writeFile(config.outputPath + ((i / 1000) + 1) + ".xml");
+//			resultDocument = (XMLDatabaseTable) bsh.get("resultDocument");
+//			resultDocument.writeFile(config.outputPath + ((i / 1000) + 1) + ".xml");
+                        resDatabase.store();
 
 
-
-			File[] outputFiles = (new File(config.outputPath)).listFiles();
-			XMLDatabaseTable finalFile = new XMLDatabaseTable(config.table,config.database);
-                        //System.out.println("Final File : \n"+finalFile);
-			for(File file : outputFiles){
-				if(file.isFile()){
-					//System.out.println("Appending file "+file.getName()+" ...");
-					finalFile.append(new XMLDatabaseTable(file.getAbsolutePath()));
-				}
-			}
-
-			finalFile.writeFile(config.outputPath+".."+File.separator+"final-"+config.id+".xml");
-                        Logger.getLogger("SystemLogger").log(Level.FINEST, "Table XML File successfully written.");
+//			File[] outputFiles = (new File(config.outputPath)).listFiles();
+//			XMLDatabaseTable finalFile = new XMLDatabaseTable(config.table,config.database);
+//                        //System.out.println("Final File : \n"+finalFile);
+//			for(File file : outputFiles){
+//				if(file.isFile()){
+//					//System.out.println("Appending file "+file.getName()+" ...");
+//					finalFile.append(new XMLDatabaseTable(file.getAbsolutePath()));
+//				}
+//			}
+//
+//			finalFile.writeFile(config.outputPath+".."+File.separator+"final-"+config.id+".xml");
+//                        Logger.getLogger("SystemLogger").log(Level.FINEST, "Table XML File successfully written.");
 		}
 		catch (EvalError ex) {
 			Logger.getLogger("SystemLogger").log(Level.SEVERE, null, ex);

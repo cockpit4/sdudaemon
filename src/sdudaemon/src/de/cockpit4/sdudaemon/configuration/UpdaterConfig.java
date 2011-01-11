@@ -37,7 +37,7 @@ public class UpdaterConfig {
 	public String port;
 	public String user;
 	public String pass;
-	public String inputFile;
+	public String databaseRepository;
 	public String db;
 	public String table;
 
@@ -50,7 +50,7 @@ public class UpdaterConfig {
 		this.port      = port;
 		this.user      = user;
 		this.pass      = pass;
-		this.inputFile = inputFile;
+		this.databaseRepository = inputFile;
 		this.db        = db;
 		this.table     = table;
 		error          = err;

@@ -50,8 +50,8 @@ public class UpdaterThread extends Thread{
 	public UpdaterThread(UpdaterConfig conf) throws ClassNotFoundException, IOException, Exception{
 		this.config = conf;
                 Logger.getLogger("SystemLogger").log(Level.INFO, "Starting database updater...");
-		if(XMLDatabaseTable.tableExists(conf.inputFile)){
-			loader = new XMLDatabaseLoader(conf.host, conf.port,conf.user,conf.pass,new XMLDatabaseTable(conf.inputFile));
+		if(XMLDatabaseTable.tableExists(conf.databaseRepository)){
+			loader = new XMLDatabaseLoader(conf.host, conf.port,conf.user,conf.pass,new XMLDatabaseTable(conf.databaseRepository));
 		}
 		else{
 			loader = new XMLDatabaseLoader(conf.host, conf.port,conf.user,conf.pass,new XMLDatabaseTable(conf.table,conf.db));

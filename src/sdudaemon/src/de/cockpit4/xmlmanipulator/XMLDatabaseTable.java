@@ -68,7 +68,7 @@ public final class XMLDatabaseTable {
     /**Constructor creates a new object based on an existing filename
      * @param filename file to load
      */
-    public XMLDatabaseTable(String filename) throws IOException, Exception {
+    public XMLDatabaseTable(String filename) throws IOException, JDOMException {
         loadFile(filename);
 
 
@@ -228,10 +228,34 @@ public final class XMLDatabaseTable {
         for (XMLDataRow row : rows) {
             if (row.columnsNames.length == row.values.length) {
                 for (int i = 0; i < row.columnsNames.length; i++) {
-                    insertValue(row.id, row.columnsNames[i], row.values[i]);
+                    if(!hasRow(row.id)){
+                        insertValue(row.id, row.columnsNames[i], row.values[i]);
+                    } else {
+                        
+                    }
                 }
             }
         }
+    }
+
+    private int getHighestID() throws NoSuchFieldException{
+        try {
+            List rows = XPath.selectNodes(xm.getDocument(), "/table/body/row/@id");
+
+            int max = 0;
+
+            for(Object c : rows){
+                int p = ((Attribute) c).getIntValue();
+                if(p > max){
+                    max = p;
+                }
+            }
+            return max;
+
+        } catch (JDOMException ex) {
+            Logger.getLogger(XMLDatabaseTable.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        throw new NoSuchFieldException("no highest index found, table empty!");
     }
 
     /**determines whether the table holds a column labeled "name" or not
@@ -314,7 +338,7 @@ public final class XMLDatabaseTable {
      */
     public XMLDataColumn[] getIndexColumns() {
         try {
-            List columns = XPath.selectNodes(getDocument(), "/table/head/column[@index ]"); //load head columns
+            List columns = XPath.selectNodes(getDocument(), "/table/head/column[@index]"); //load head columns
 
             //System.out.println(" COLUMNS : "+columns.size());
 
@@ -356,9 +380,44 @@ public final class XMLDatabaseTable {
         } catch (JDOMException ex) {
             Logger.getLogger("SystemLogger").log(Level.SEVERE, null, ex);
         }
+        return null;
+    }
 
+    public XMLDataColumn[] getReferencingColumns() throws JDOMException{
+        try {
+            List columns = XPath.selectNodes(getDocument(), "/table/head/column[@reference-table][@reference-key]"); //load head columns
 
+            //System.out.println(" COLUMNS : "+columns.size());
 
+            XMLDataColumn[] result = new XMLDataColumn[columns.size()]; //create a new array keeping the result
+
+            for (int i = 0; i < columns.size(); i++) { //iterate through and assing each name to its type
+                String cname = ((Element) columns.get(i)).getAttributeValue("name");
+                String type = ((Element) columns.get(i)).getAttributeValue("type");
+                int index = -1; // not an index column
+                String refTab;
+                String refKey;
+                boolean indexcol = xm.nodeExists("/table/head/column[@name=\'" + cname + "\'][@type=\'" + type + "\']/@index");
+
+                if (indexcol) {
+                    index = Integer.parseInt(((Element) columns.get(i)).getAttributeValue("index"));
+                }
+
+                if (indexcol) {
+                    refTab = ((Element) columns.get(i)).getAttributeValue("reference-table");
+                    refKey = ((Element) columns.get(i)).getAttributeValue("reference-key");
+                    result[i] = new XMLDataColumn(cname, type, refTab, refKey, index);
+                } else {
+                        refTab = ((Element) columns.get(i)).getAttributeValue("reference-table");
+                        refKey = ((Element) columns.get(i)).getAttributeValue("reference-key");
+                        result[i] = new XMLDataColumn(cname, type, refTab, refKey);
+                }
+
+                return result;
+            }
+        } catch (JDOMException ex) {
+            Logger.getLogger("SystemLogger").log(Level.SEVERE, null, ex);
+        }
         return null;
     }
 
@@ -562,42 +621,23 @@ public final class XMLDatabaseTable {
         return xm.getDocument();
     }
 
+
+
+
     public String makeChecksum(XMLDataRow row) {
-        try {
-
             XMLDataColumn[] indexColumns = getIndexColumns();
-
-//            for(XMLDataColumn c :indexColumns){
-//                System.err.println("Data column : \n"+c);
-//            }
-
-            //System.err.println("Data row : \n"+row);
 
             ToolHelper.quicksort(indexColumns, 0, indexColumns.length - 1);
 
-            MessageDigest md5 = MessageDigest.getInstance("MD5");
-            md5.reset();
+
             String message = "";
             for (XMLDataColumn c : indexColumns) {
-
-                //System.err.println("IndexColumn : "+c.name);
                 message += row.getData(c);
             }
-            //System.err.println("Message : "+message);
-            md5.update(message.getBytes());
 
-            byte[] b = md5.digest();
-            String checksum = "";
+            byte[] b = ToolHelper.md5sum(message.getBytes());
 
-            for (byte t : b) {
-                checksum += ToolHelper.byteToHex(t);
-            }
-
-            return checksum;
-        } catch (NoSuchAlgorithmException ex) {
-            Logger.getLogger(XMLDatabaseTable.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return null;
+            return ToolHelper.bytesToHexString(b);
     }
 
     /**finalize document, add hashes to rows and the table head
@@ -607,7 +647,6 @@ public final class XMLDatabaseTable {
     public void finalizeDocument() throws NoSuchFieldException { //TODO : make this deterministic
         Document doc = xm.getDocument();
         try {
-            MessageDigest md5 = MessageDigest.getInstance("MD5");
             String message = "";
 
             List indexColumns = XPath.selectNodes(doc, "/table/head/column[@index]");
@@ -631,27 +670,18 @@ public final class XMLDatabaseTable {
                         message += row.getData(e.getAttributeValue("name"));
                     }
                     //System.out.println("message " + message);
-                    md5.update(message.getBytes());
-                    byte[] b = md5.digest();
-                    String checksum = "";
-
-                    for (byte t : b) {
-                        checksum += ToolHelper.byteToHex(t);
-                    }
-
+                    byte[] b = ToolHelper.md5sum(message.getBytes());
+                    String checksum = ToolHelper.bytesToHexString(b);
 
                     ((Element) r).setAttribute("checksum", checksum);
                     message = "";
                     checksum = "";
-                    md5.reset();
                 }
             } else {
                 throw new NoSuchFieldException("There is at least one index row required!");
             }
 
 
-        } catch (NoSuchAlgorithmException ex) {
-            Logger.getLogger("SystemLogger").log(Level.SEVERE, null, ex);
         } catch (JDOMException ex) {
             Logger.getLogger("SystemLogger").log(Level.SEVERE, null, ex);
         }
@@ -678,6 +708,16 @@ public final class XMLDatabaseTable {
     public static boolean tableExists(String filename) throws IOException {
         File check = new File(filename);
         return (check.exists() && check.isFile());
+    }
+
+    //Check if a table exists.
+    /**Checks if a table exists.
+     * @param filename to check
+     * @return true if XML File is accessible to the user
+     */
+    public static boolean tableAccessible(String filename) throws IOException {
+        File check = new File(filename);
+        return (check.exists() && check.isFile() && check.canRead() && check.canWrite());
     }
     //
 
@@ -708,13 +748,13 @@ public final class XMLDatabaseTable {
     /**load the xml file
      * @param filename and path to load
      */
-    public void loadFile(String filename) throws IOException, Exception {
+    public void loadFile(String filename) throws IOException, JDOMException {
         File in = new File(filename);
 
         if (in.exists() && in.isFile() && in.canRead()) {
             xm = new XMLManipulator(XMLManipulator.readFileAsString(filename));
         } else {
-            throw new Exception("no such file!");
+            throw new IOException("no such file!");
         }
     }
 
@@ -788,5 +828,10 @@ public final class XMLDatabaseTable {
         System.out.println("Row Exists : "+table.rowExists(rows[0]));
         System.out.println("Row Exists : "+table.rowExists(r));
         System.out.println("DOCUMENT :\n" + table);
+
+        XMLDataColumn[] t = table.getReferencingColumns();
+        for(XMLDataColumn c : t){
+            System.out.println("Ref Columns : "+c);
+        }
     }
 }

@@ -77,7 +77,7 @@ public class ProjectController extends AbstractObservableModel implements ModelC
                     }
 
                     for(int i = 0;i<model.getUpdaterCount();i++){
-                        xm.addXPathNode("/config/updater/updater[@id=\""+model.getUpdater(i).id+"\"][@active=\""+model.getUpdater(i).active+"\"][@host=\""+model.getUpdater(i).host+"\"][@port=\""+model.getUpdater(i).port+"\"][@user=\""+model.getUpdater(i).user+"\"][@password=\""+model.getUpdater(i).pass+"\"][@db=\""+model.getUpdater(i).db+"\"][@table=\""+model.getUpdater(i).table+"\"][@file=\""+model.getUpdater(i).inputFile+"\"][@output=\""+model.getRecycler(i).outputPath+"\"]","");
+                        xm.addXPathNode("/config/updater/updater[@id=\""+model.getUpdater(i).id+"\"][@active=\""+model.getUpdater(i).active+"\"][@host=\""+model.getUpdater(i).host+"\"][@port=\""+model.getUpdater(i).port+"\"][@user=\""+model.getUpdater(i).user+"\"][@password=\""+model.getUpdater(i).pass+"\"][@db=\""+model.getUpdater(i).db+"\"][@table=\""+model.getUpdater(i).table+"\"][@file=\""+model.getUpdater(i).databaseRepository+"\"][@output=\""+model.getRecycler(i).outputPath+"\"]","");
                     }
 
                     FileWriter fw = new FileWriter(projectConfig);
@@ -110,7 +110,7 @@ public class ProjectController extends AbstractObservableModel implements ModelC
                     }
 
                     for(int i = 0;i<model.getUpdaterCount();i++){
-                        xm.addXPathNode("/config/updater/updater[@id=\""+model.getUpdater(i).id+"\"][@active=\""+model.getUpdater(i).active+"\"][@host=\""+model.getUpdater(i).host+"\"][@port=\""+model.getUpdater(i).port+"\"][@user=\""+model.getUpdater(i).user+"\"][@password=\""+model.getUpdater(i).pass+"\"][@db=\""+model.getUpdater(i).db+"\"][@table=\""+model.getUpdater(i).table+"\"][@file=\""+model.getUpdater(i).inputFile+"\"][@output=\""+model.getRecycler(i).outputPath+"\"]","");
+                        xm.addXPathNode("/config/updater/updater[@id=\""+model.getUpdater(i).id+"\"][@active=\""+model.getUpdater(i).active+"\"][@host=\""+model.getUpdater(i).host+"\"][@port=\""+model.getUpdater(i).port+"\"][@user=\""+model.getUpdater(i).user+"\"][@password=\""+model.getUpdater(i).pass+"\"][@db=\""+model.getUpdater(i).db+"\"][@table=\""+model.getUpdater(i).table+"\"][@file=\""+model.getUpdater(i).databaseRepository+"\"][@output=\""+model.getRecycler(i).outputPath+"\"]","");
                     }
 
                     FileWriter fw = new FileWriter(projectConfig);
