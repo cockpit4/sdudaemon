@@ -92,7 +92,7 @@ public class XPathDissembler{
 		String xpreg_start    = "^([/]{1,2})?"; // match / or // at the begin of a path sequence
 		String xpreg_attr     = "(@[A-Za-z]+[0-9]*[-]*[:]*[A-Za-z0-9]+)";   // match an single attribute like : //@style or @dt:dt
 		String xpreg_node     = "[A-Za-z]+[0-9]*[-]*[:]*[A-Za-z0-9]*(\\(\\))?";       // a node without an predicate like : //body and //body/child::text()
-		String xpreg_node_pre = "(\\[@[A-Za-z]+[0-9]*[-]*[:]*[A-Za-z0-9]*[=][\\'][A-Za-z0-9-./\\\\:\\.\\(\\)]*\\'\\])?"; //or an node with an predicate like : //body[@id='body0']
+		String xpreg_node_pre = "(\\[@[A-Za-z]+[0-9]*[-]*[:]*[A-Za-z0-9]*[=][\\'][A-Za-z0-9-_./\\\\:\\.\\(\\)]*\\'\\])?"; //or an node with an predicate like : //body[@id='body0']
 		String xpreg_node_num = "(\\[([0-9]+)\\])"; // or a node with number quantifier like : //table/tr[10]
                 
                 //deprecated! --v

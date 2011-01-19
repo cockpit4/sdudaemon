@@ -101,8 +101,7 @@ public class XMLDataRow {
             for(int i = 0 ; i<values.length;i++){
                 res += columnsNames[i].name + " : "+values[i]+"\n";
             }
-
-
+            res+="MD5 : "+checksum;
             return res;
         }
 }

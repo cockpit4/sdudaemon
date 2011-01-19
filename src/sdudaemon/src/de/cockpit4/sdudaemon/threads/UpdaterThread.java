@@ -29,7 +29,6 @@ import java.util.logging.Logger;
 import org.jdom.JDOMException;
 import de.cockpit4.sdudaemon.configuration.UpdaterConfig;
 import de.cockpit4.xmlmanipulator.XMLDatabaseLoader;
-import de.cockpit4.xmlmanipulator.XMLDatabaseTable;
 
 /**
  * This class handles project database and table operations
@@ -49,13 +48,7 @@ public class UpdaterThread extends Thread{
 	 */
 	public UpdaterThread(UpdaterConfig conf) throws ClassNotFoundException, IOException, Exception{
 		this.config = conf;
-                Logger.getLogger("SystemLogger").log(Level.INFO, "Starting database updater...");
-		if(XMLDatabaseTable.tableExists(conf.databaseRepository)){
-			loader = new XMLDatabaseLoader(conf.host, conf.port,conf.user,conf.pass,new XMLDatabaseTable(conf.databaseRepository));
-		}
-		else{
-			loader = new XMLDatabaseLoader(conf.host, conf.port,conf.user,conf.pass,new XMLDatabaseTable(conf.table,conf.db));
-		}
+                loader = new XMLDatabaseLoader(conf.host, conf.port, conf.user, conf.pass, conf.db, conf.databaseRepository);
 	}
 	/**running function, here the thread loads inserts and updated row in the table. If the table is nonexistent this function creates a new based on the data found in the path, the recycler used to store its output.
 	 */

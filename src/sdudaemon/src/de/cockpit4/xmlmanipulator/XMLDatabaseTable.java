@@ -30,7 +30,6 @@ import org.jdom.Document;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.security.MessageDigest;
 import java.util.List;
 import org.jdom.Attribute;
 import org.jdom.Element;
@@ -48,7 +47,7 @@ import org.jdom.xpath.XPath;
 public final class XMLDatabaseTable {
 
     private XMLManipulator xm;
-    private String name;
+    private String tableName;
     private String db;
     private int datalength = 0;
 
@@ -58,7 +57,7 @@ public final class XMLDatabaseTable {
      */
     public XMLDatabaseTable(String name, String db) throws Exception {
         this.db = db;
-        this.name = name;
+        this.tableName = name;
         xm = new XMLManipulator("");
         xm.addXPathNode("/table[@name=\'" + name + "\'][@database=\'" + db + "\']", "");
         xm.addXPathNode("/table[@name=\'" + name + "\'][@database=\'" + db + "\']/head", "");
@@ -74,11 +73,15 @@ public final class XMLDatabaseTable {
 
         Object res = XPath.selectSingleNode(getDocument(), "/table");
 
-        name = ((Element) res).getAttributeValue("name");
+        tableName = ((Element) res).getAttributeValue("name");
         db = ((Element) res).getAttributeValue("database");
     }
     //creates a new table column labeled "name" of type "type" if it exists this method does nothing
-
+    /**adds an new column to the table
+     * @param name of the column
+     * @param type of the column
+     * @throws JDOMException
+     */
     public void addColumn(String name, String type) throws JDOMException {
         if (!xm.nodeExists("/table/head/column[@name=\'" + name + "\']")) {
             try {
@@ -101,7 +104,8 @@ public final class XMLDatabaseTable {
     public void addColumn(String name, String type, int index) throws JDOMException {
         if (!xm.nodeExists("/table/head/column[@name=\'" + name + "\']")) {
             try {
-                //System.out.println("Document "+xm);
+
+                //System.out.println("added Column : " + name + "  " + type + " " + index);
                 xm.addXPathNode("/table/head/column[@name=\'" + name + "\'][@type=\'" + type + "\'][@index=\'" + index + "\']", "");
             } catch (IllegalArgumentException ex) {
                 Logger.getLogger("SystemLogger").log(Level.SEVERE, null, ex);
@@ -110,11 +114,17 @@ public final class XMLDatabaseTable {
             }
         }
     }
-
+    /**Adds a new not existing column to the table
+     * @param name of the column
+     * @param type of the column
+     * @param refTab referencing table
+     * @param refKey referencing keys
+     * @throws JDOMException
+     */
     public void addColumn(String name, String type, String refTab, String refKey) throws JDOMException {
         if (!xm.nodeExists("/table/head/column[@name=\'" + name + "\']")) {
             try {
-                //System.out.println("Document "+xm);
+
                 xm.addXPathNode("/table/head/column[@name=\'" + name + "\'][@type=\'" + type + "\'][@reference-table=\'" + refTab + "\'][@reference-key=\'" + refKey + "\']", "");
             } catch (IllegalArgumentException ex) {
                 Logger.getLogger("SystemLogger").log(Level.SEVERE, null, ex);
@@ -123,11 +133,17 @@ public final class XMLDatabaseTable {
             }
         }
     }
-
+    /**adds a new not existing column to the table
+     * @param name of the column
+     * @param type of the column
+     * @param refTab reference table
+     * @param refKey reference key
+     * @param index , indicating the order the data will have to produce the md5checksum. should be a series starting by 0
+     * @throws JDOMException
+     */
     public void addColumn(String name, String type, String refTab, String refKey, int index) throws JDOMException {
         if (!xm.nodeExists("/table/head/column[@name=\'" + name + "\']")) {
             try {
-                //System.out.println("Document "+xm);
                 xm.addXPathNode("/table/head/column[@name=\'" + name + "\'][@type=\'" + type + "\'][@reference-table=\'" + refTab + "\'][@reference-key=\'" + refKey + "\'][@index=\'" + index + "\']", "");
             } catch (IllegalArgumentException ex) {
                 Logger.getLogger("SystemLogger").log(Level.SEVERE, null, ex);
@@ -136,9 +152,12 @@ public final class XMLDatabaseTable {
             }
         }
     }
-
+    /**adds a single column not existing column to the table
+     * @param column to add
+     * @throws JDOMException
+     */
     public void addColumn(XMLDataColumn column) throws JDOMException {
-        if (!xm.nodeExists("/table/head/column[@name=\'" + name + "\']")) {
+        if (!xm.nodeExists("/table/head/column[@name=\'" + column.name + "\']")) {
 
             boolean index = column.index > -1;
             boolean reference = (column.refTable != null) && (column.refKey != null);
@@ -158,11 +177,13 @@ public final class XMLDatabaseTable {
             }
         }
     }
-
+    /**adds columns not exisiting by name to the table
+     * @param columns to add
+     * @throws JDOMException
+     */
     public void addColumns(XMLDataColumn[] columns) throws JDOMException {
         if (columns != null) {
             for (XMLDataColumn c : columns) {
-                //System.out.println(" name :"+c.name+" type : "+c.type);
                 addColumn(c);
             }
         }
@@ -173,11 +194,11 @@ public final class XMLDatabaseTable {
      */
     public int getSize() {
         try {
-            datalength = XPath.selectNodes(getDocument(), "/table/body/row").size();
+            return XPath.selectNodes(getDocument(), "/table/body/row").size();
         } catch (JDOMException ex) {
             Logger.getLogger("SystemLogger").log(Level.SEVERE, null, ex);
         }
-        return datalength;
+        return 0;
     }
 
     /**creates a non-existent row value, or updates it if it exists
@@ -215,6 +236,7 @@ public final class XMLDatabaseTable {
         if (dat != null) {
             if (dat.columnsNames.length == dat.values.length) {
                 for (int i = 0; i < dat.columnsNames.length; i++) {
+                    //System.out.println(" value "+dat.values[i]);
                     insertValue(dat.id, dat.columnsNames[i], dat.values[i]);
                 }
             }
@@ -222,36 +244,34 @@ public final class XMLDatabaseTable {
     }
 
     /**Inserts value an amount of XMLDataRow's into the XML database
-     * @param rows
+     * @param rows to insert
      */
     public void insertValues(XMLDataRow[] rows) throws Exception {
-        for (XMLDataRow row : rows) {
-            if (row.columnsNames.length == row.values.length) {
-                for (int i = 0; i < row.columnsNames.length; i++) {
-                    if(!hasRow(row.id)){
-                        insertValue(row.id, row.columnsNames[i], row.values[i]);
-                    } else {
-                        
-                    }
-                }
+        for (int i = 0; i < rows.length; i++) {
+            if (!hasRow(rows[i].id)) {
+                insertValue(rows[i]);
+            } else {
             }
         }
     }
-
-    private int getHighestID() throws NoSuchFieldException{
+    /**Finds the highest id in data rows and returns it
+     * @return integer highest id found in the data set
+     * @throws NoSuchFieldException if table is empty
+     */
+    public int getHighestID() throws NoSuchFieldException {
         try {
             List rows = XPath.selectNodes(xm.getDocument(), "/table/body/row/@id");
+            if (rows != null) {
+                int max = -1;
 
-            int max = 0;
-
-            for(Object c : rows){
-                int p = ((Attribute) c).getIntValue();
-                if(p > max){
-                    max = p;
+                for (Object c : rows) {
+                    int p = ((Attribute) c).getIntValue();
+                    if (p > max) {
+                        max = p;
+                    }
                 }
+                return max;
             }
-            return max;
-
         } catch (JDOMException ex) {
             Logger.getLogger(XMLDatabaseTable.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -327,7 +347,6 @@ public final class XMLDatabaseTable {
                     }
                 }
             }
-
             return res;
         }
         return null;
@@ -340,54 +359,43 @@ public final class XMLDatabaseTable {
         try {
             List columns = XPath.selectNodes(getDocument(), "/table/head/column[@index]"); //load head columns
 
-            //System.out.println(" COLUMNS : "+columns.size());
+           //System.err.println(" COLUMNS SIZE: "+columns.size());
 
             XMLDataColumn[] result = new XMLDataColumn[columns.size()]; //create a new array keeping the result
 
             for (int i = 0; i < columns.size(); i++) { //iterate through and assing each name to its type
                 String cname = ((Element) columns.get(i)).getAttributeValue("name");
                 String type = ((Element) columns.get(i)).getAttributeValue("type");
-                int index = -1; // not an index column
+                int index = Integer.parseInt(((Element) columns.get(i)).getAttributeValue("index"));
                 String refTab;
                 String refKey;
                 boolean reference = xm.nodeExists("/table/head/column[@name=\'" + cname + "\'][@type=\'" + type + "\']/@reference-table");
-                boolean indexcol = xm.nodeExists("/table/head/column[@name=\'" + cname + "\'][@type=\'" + type + "\']/@index");
+                //boolean indexcol = xm.nodeExists("/table/head/column[@name=\'" + cname + "\'][@type=\'" + type + "\']/@index");
 
-                if (indexcol) {
-                    index = Integer.parseInt(((Element) columns.get(i)).getAttributeValue("index"));
-                }
-
-                if (indexcol && reference) {
+                if (reference) {
                     refTab = ((Element) columns.get(i)).getAttributeValue("reference-table");
                     refKey = ((Element) columns.get(i)).getAttributeValue("reference-key");
                     result[i] = new XMLDataColumn(cname, type, refTab, refKey, index);
                 } else {
-                    if (reference) {
-                        refTab = ((Element) columns.get(i)).getAttributeValue("reference-table");
-                        refKey = ((Element) columns.get(i)).getAttributeValue("reference-key");
-                        result[i] = new XMLDataColumn(cname, type, refTab, refKey);
-                    } else {
-                        if (indexcol) {
-                            result[i] = new XMLDataColumn(cname, type, index);
-                        } else {
-                            result[i] = new XMLDataColumn(cname, type); //Create a new data column
-                        }
-                    }
+                    result[i] = new XMLDataColumn(cname, type, index);
                 }
 
-                return result;
+
             }
+        return result;
         } catch (JDOMException ex) {
             Logger.getLogger("SystemLogger").log(Level.SEVERE, null, ex);
         }
         return null;
     }
 
-    public XMLDataColumn[] getReferencingColumns() throws JDOMException{
+    /**Data columns referencing another table
+     * @return an array of columns referencing another table
+     * @throws JDOMException
+     */
+    public XMLDataColumn[] getReferencingColumns() throws JDOMException {
         try {
             List columns = XPath.selectNodes(getDocument(), "/table/head/column[@reference-table][@reference-key]"); //load head columns
-
-            //System.out.println(" COLUMNS : "+columns.size());
 
             XMLDataColumn[] result = new XMLDataColumn[columns.size()]; //create a new array keeping the result
 
@@ -408,17 +416,18 @@ public final class XMLDatabaseTable {
                     refKey = ((Element) columns.get(i)).getAttributeValue("reference-key");
                     result[i] = new XMLDataColumn(cname, type, refTab, refKey, index);
                 } else {
-                        refTab = ((Element) columns.get(i)).getAttributeValue("reference-table");
-                        refKey = ((Element) columns.get(i)).getAttributeValue("reference-key");
-                        result[i] = new XMLDataColumn(cname, type, refTab, refKey);
+                    refTab = ((Element) columns.get(i)).getAttributeValue("reference-table");
+                    refKey = ((Element) columns.get(i)).getAttributeValue("reference-key");
+                    result[i] = new XMLDataColumn(cname, type, refTab, refKey);
                 }
-
-                return result;
             }
+            return result;
         } catch (JDOMException ex) {
             Logger.getLogger("SystemLogger").log(Level.SEVERE, null, ex);
         }
-        return null;
+//        finally{
+            return null;
+//        }
     }
 
     /**Returns the XMLDataRow Object assigned to id
@@ -447,6 +456,7 @@ public final class XMLDatabaseTable {
         }
         return null;
     }
+
     /**Index check on row. Generates the MD5 Sum over the index colums and querys the XML Document for a fitting row
      * @param row to check its existence
      * @return true if row exists
@@ -454,7 +464,38 @@ public final class XMLDatabaseTable {
      */
     public boolean rowExists(XMLDataRow row) throws JDOMException {
         String md5 = makeChecksum(row);
-        return xm.nodeExists("/table/body/row[@checksum=\'"+md5+"\']");
+        return xm.nodeExists("/table/body/row[@checksum=\'" + md5 + "\']");
+    }
+
+    /**Finds a row by checksum. 
+     * @param checkSum to lookup
+     * @return Data row if found, null otherwise
+     */
+    public XMLDataRow findRowByChecksum(String checkSum) {
+        try {
+            List columns = XPath.selectNodes(getDocument(), "/table/body/row[@checksum=\'" + checkSum + "\']/column");
+            if (columns != null) {
+                XMLDataColumn[] xcol = new XMLDataColumn[columns.size()];
+                String[] values = new String[columns.size()];
+                int id = 0;
+                int i = 0;
+                for (Object o : columns) {
+                    Element e = (Element) o;
+                    id = Integer.parseInt(e.getParentElement().getAttributeValue("id"));
+                    String name = e.getAttributeValue("name");
+                    String value = e.getText();
+                    xcol[i] = getColumn(name);
+                    values[i] = value;
+                    i++;
+                }
+                return new XMLDataRow(id, xcol, values);
+            }
+        } catch (JDOMException ex) {
+            Logger.getLogger(XMLDatabaseTable.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (Exception ex) {
+            Logger.getLogger(XMLDatabaseTable.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
     }
 
     /**Returns the database name of the XML Database
@@ -468,7 +509,7 @@ public final class XMLDatabaseTable {
      * @return name of the table
      */
     public String getTableName() {
-        return name;
+        return tableName;
     }
 
     /**Returns an array containing structures describing a database column
@@ -484,6 +525,7 @@ public final class XMLDatabaseTable {
         for (int i = 0; i < columns.size(); i++) { //iterate through and assing each name to its type
             String cname = ((Element) columns.get(i)).getAttributeValue("name");
             String type = ((Element) columns.get(i)).getAttributeValue("type");
+            //System.out.println("COLUMN name : "+cname+" TYPE : "+type);
             int index = -1; // not an index column
             String refTab;
             String refKey;
@@ -497,15 +539,15 @@ public final class XMLDatabaseTable {
             if (indexcol && reference) {
                 refTab = ((Element) columns.get(i)).getAttributeValue("reference-table");
                 refKey = ((Element) columns.get(i)).getAttributeValue("reference-key");
-                result[i] = new XMLDataColumn(name, type, refTab, refKey, index);
+                result[i] = new XMLDataColumn(cname, type, refTab, refKey, index);
             } else {
                 if (reference) {
                     refTab = ((Element) columns.get(i)).getAttributeValue("reference-table");
                     refKey = ((Element) columns.get(i)).getAttributeValue("reference-key");
-                    result[i] = new XMLDataColumn(name, type, refTab, refKey);
+                    result[i] = new XMLDataColumn(cname, type, refTab, refKey);
                 } else {
                     if (indexcol) {
-                        result[i] = new XMLDataColumn(name, type, index);
+                        result[i] = new XMLDataColumn(cname, type, index);
                     } else {
                         result[i] = new XMLDataColumn(cname, type); //Create a new data column
                     }
@@ -568,15 +610,15 @@ public final class XMLDatabaseTable {
             if (indexcol && reference) {
                 refTab = ((Element) column).getAttributeValue("reference-table");
                 refKey = ((Element) column).getAttributeValue("reference-key");
-                columnSet[i] = new XMLDataColumn(name, type, refTab, refKey, index);
+                columnSet[i] = new XMLDataColumn(cname, type, refTab, refKey, index);
             } else {
                 if (reference) {
                     refTab = ((Element) column).getAttributeValue("reference-table");
                     refKey = ((Element) column).getAttributeValue("reference-key");
-                    columnSet[i] = new XMLDataColumn(name, type, refTab, refKey);
+                    columnSet[i] = new XMLDataColumn(cname, type, refTab, refKey);
                 } else {
                     if (indexcol) {
-                        columnSet[i] = new XMLDataColumn(name, type, index);
+                        columnSet[i] = new XMLDataColumn(cname, type, index);
                     } else {
                         columnSet[i] = new XMLDataColumn(cname, type); //Create a new data column
                     }
@@ -596,7 +638,12 @@ public final class XMLDatabaseTable {
         for (Object row : rows) { //dispatch each row
             int id = Integer.parseInt(((Element) row).getAttributeValue("id")); //ID of the dataset
             List columns = XPath.selectNodes(getDocument(), "/table/body/row[@id=\'" + id + "\']/column"); //select column names and data
+            String md5 = "";
 
+            try{
+                md5 = ((Attribute)XPath.selectSingleNode(getDocument(), "/table/body/row[@id=\'" + id + "\']/@checksum")).getValue();
+            }catch(Exception e){}
+            
             String[] data = new String[columns.size()];
             XMLDataColumn[] datacolumns = new XMLDataColumn[columns.size()];
 
@@ -609,6 +656,7 @@ public final class XMLDatabaseTable {
                 j++;
             }
             result[i] = new XMLDataRow(id, datacolumns, data);
+            result[i].checksum = md5;
             i++;
         }
         return result;
@@ -620,24 +668,26 @@ public final class XMLDatabaseTable {
     public Document getDocument() {
         return xm.getDocument();
     }
-
-
-
-
+    /**Generates the MD5 Checksum of a data row. The checksum is defined by the tables index columns noted with a index attribute starting at 0. -1 means the column is not an index column.
+     * @param row to calculate its checksum from
+     * @return md5sum over the the index columns
+     */
     public String makeChecksum(XMLDataRow row) {
-            XMLDataColumn[] indexColumns = getIndexColumns();
+        XMLDataColumn[] indexColumns = getIndexColumns();
+//        for(XMLDataColumn t : indexColumns){
+//            System.out.println("checksum "+t);
+//        }
+        ToolHelper.quicksort(indexColumns, 0, indexColumns.length - 1);
 
-            ToolHelper.quicksort(indexColumns, 0, indexColumns.length - 1);
 
+        String message = "";
+        for (XMLDataColumn c : indexColumns) {
+            message += row.getData(c);
+        }
 
-            String message = "";
-            for (XMLDataColumn c : indexColumns) {
-                message += row.getData(c);
-            }
+        byte[] b = ToolHelper.md5sum(message.getBytes());
 
-            byte[] b = ToolHelper.md5sum(message.getBytes());
-
-            return ToolHelper.bytesToHexString(b);
+        return ToolHelper.bytesToHexString(b);
     }
 
     /**finalize document, add hashes to rows and the table head
@@ -686,8 +736,6 @@ public final class XMLDatabaseTable {
             Logger.getLogger("SystemLogger").log(Level.SEVERE, null, ex);
         }
     }
-    //Appents two XMLDatabaseTables
-
     /**Appends a new Document to this one,
      */
     public void append(XMLDatabaseTable tab) throws JDOMException, Exception {
@@ -764,17 +812,38 @@ public final class XMLDatabaseTable {
     public String toString() {
         return xm.toString();
     }
-
+    /**Assigns a referenced table to a column
+     * @param column column referencing
+     * @param table foreign table referenced
+     * @param key foreign key
+     */
     public void addReference(String column, String table, String key) {
         try {
             XMLDataColumn c = findColumn(getXMLDataColumns(), column);
-
-            c.refTable = table;
-            c.refKey = key;
+            
+            if(c!=null){
+                c.refTable = table;
+                c.refKey   = key;
+            }
+            
         } catch (JDOMException ex) {
             Logger.getLogger("SystemLogger").log(Level.SEVERE, null, ex);
         }
     }
+    /**Returns a list of tables columns of this table are referencing.
+     * @return list of foreign tables, null if no reference is found.
+     */
+    public String[] getReferencedTables() throws JDOMException{
+        XMLDataColumn[] refCols = getReferencingColumns();
+        String[] refTables = new String[refCols.length];
+
+        for(int i = 0;i<refCols.length;i++){
+            refTables[i]=refCols[i].refTable;
+        }
+
+        return refTables;
+    }
+
 
     /**Standalone testing function
      */
@@ -797,41 +866,32 @@ public final class XMLDatabaseTable {
         data[2] = "testaddress";
         rows[0] = new XMLDataRow(0, cols, data);
 
-        String data2[] = new String[3];
+        //System.err.println("Row 0 : " + rows[0]);
+
+        String[] data2 = new String[3];
         data2[0] = "test second";
         data2[1] = "surtest second";
         data2[2] = "testaddress second";
         rows[1] = new XMLDataRow(1, cols, data2);
 
-        String data3[] = new String[3];
+        String[] data3 = new String[3];
         data3[0] = "test third";
         data3[1] = "surtest third";
         data3[2] = "testaddress third";
         rows[2] = new XMLDataRow(2, cols, data3);
-        System.out.println("data 3 : \n"+rows[2]);
-        System.out.println("col0 : "+cols[0]);
-        System.out.println("checksum : "+table.makeChecksum(rows[2]));
-        
+
         table.insertValues(rows);
         table.finalizeDocument();
 
-        String[] data4 = new String[3];
-        data4[0] = "test thirds";
-        data4[1] = "surtest third";
-        data4[2] = "testaddress third";
-        XMLDataRow r = new XMLDataRow(3, cols, data4);
-        System.out.println("Row Exists : "+table.rowExists(rows[0]));
-        System.out.println("Row Exists : "+table.rowExists(r));
+        XMLDataRow[] dataRows = table.getData();
 
-        table.insertValue(r);
-        table.finalizeDocument();
-        System.out.println("Row Exists : "+table.rowExists(rows[0]));
-        System.out.println("Row Exists : "+table.rowExists(r));
-        System.out.println("DOCUMENT :\n" + table);
+        System.out.println("Table : "+table);
 
-        XMLDataColumn[] t = table.getReferencingColumns();
-        for(XMLDataColumn c : t){
-            System.out.println("Ref Columns : "+c);
+        for(XMLDataRow r : dataRows){
+            System.out.println("Data : "+r);
         }
+
+        //System.out.println("Data : " + table.findRowByChecksum(table.makeChecksum(rows[2])));
+
     }
 }

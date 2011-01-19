@@ -82,6 +82,7 @@ public class XMLDataColumn implements Sortable{
 		this.type = type;
                 this.refTable = table;
                 this.refKey = key;
+                //System.out.println("Column : name : "+name+" type : "+type+" index : "+index+" references : "+refTable+"."+refKey);
         }
         /**Creates a new Database Column referencing to another table, marked as index column
          * @param name of the column

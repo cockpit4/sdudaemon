@@ -25,6 +25,7 @@ import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Stack;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.jdom.JDOMException;
@@ -48,7 +49,7 @@ public class XMLDatabaseManager {
             if (tableDir.canRead()) {
                 if (tableDir.canWrite()) {
                     this.tablePath = tableDir.getAbsolutePath();
-                    System.out.println("Table Path : " + tablePath);
+                    //System.out.println("Table Path : " + tablePath);
 
                     File[] tablefiles = tableDir.listFiles(new FileFilter() {
 
@@ -135,6 +136,17 @@ public class XMLDatabaseManager {
         return res;
     }
 
+    public String[] listTablesOfDatabase(String name){
+        Stack<String> tableList = new Stack<String>();
+
+        for(XMLDatabaseTable t : tables){
+            if(name.equals(t.getDatabaseName())){
+                tableList.push(t.getTableName());
+            }
+        }
+        return tableList.toArray(new String[tableList.size()]);
+    }
+
     /**Determines if a Database keeps tables
      * @return true if database containes some files false if it is empty 
      */
@@ -182,6 +194,7 @@ public class XMLDatabaseManager {
      */
     public boolean linkComplete(XMLDataColumn t) {
         try {
+            
             if (t.refTable != null && t.refKey != null) {
                 if (tableExists(t.refTable)) {
 
@@ -202,11 +215,15 @@ public class XMLDatabaseManager {
     public boolean checkReferences() throws JDOMException {
         for (XMLDatabaseTable table : tables) {
             XMLDataColumn[] cols = table.getReferencingColumns();
+            //System.out.println("Current Table: "+table.getTableName());
+            //System.out.println("Document : "+table);
             if (cols != null) {
                 for (XMLDataColumn t : cols) {
+                    //System.out.println("Columns : "+t);
                     if (!linkComplete(t)) {
                         return false;
                     }
+                    //System.out.println("OK");
                 }
             }
         }
@@ -243,13 +260,55 @@ public class XMLDatabaseManager {
 
     public static void main(String[] argV) throws Exception {
         XMLDatabaseManager m = new XMLDatabaseManager("/home/kneo/Documents/cockpit4/Projects/Praktikum/XML-Tables");
+        XMLDatabaseTable test;
+        XMLDatabaseTable reftest1;
+        XMLDatabaseTable reftest2;
+        if(m.tableExists("test")){
+            test = m.aquireTable("test");
+        }else{
+            XMLDataColumn[] cols = new XMLDataColumn[3];
+            cols[0] = new XMLDataColumn("test_id", "BIGINT", null, null, -1);
+            cols[1] = new XMLDataColumn("name", "BIGINT", null, null, 0);
+            cols[2] = new XMLDataColumn("age", "SMALLINT", null, null, -1);
+            test = new XMLDatabaseTable("test", "pmw");
+            test.addColumns(cols);
+            m.addTable(test);
+        }
+        if(m.tableExists("reftest1")){
+            reftest1 = m.aquireTable("reftest1");
+        }else{
+            XMLDataColumn[] cols = new XMLDataColumn[3];
+            cols[0]  = new XMLDataColumn("reftest1_id", "BIGINT", null, null, -1);
+            cols[1]  = new XMLDataColumn("name", "BIGINT", null, null, 0);
+            cols[2]  = new XMLDataColumn("age", "SMALLINT", "test", "age", -1);
+            reftest1 = new XMLDatabaseTable("reftest1", "pmw");
+            reftest1.addColumns(cols);
+            m.addTable(reftest1);
+        }
 
-
-        String[] tables = m.listTables();
-
-        System.out.println("References complete : " + m.checkReferences());
-
-
+        if(m.tableExists("reftest2")){
+            reftest2 = m.aquireTable("reftest2");
+        }else{
+            XMLDataColumn[] cols = new XMLDataColumn[3];
+            cols[0]  = new XMLDataColumn("reftest1_id", "BIGINT", "reftest1", "reftest1_id", -1);
+            cols[1]  = new XMLDataColumn("name", "BIGINT", null, null, 0);
+            cols[2]  = new XMLDataColumn("age", "SMALLINT", "reftest1", "age", -1);
+            reftest2 = new XMLDatabaseTable("reftest2", "pmw");
+            reftest2.addColumns(cols);
+            m.addTable(reftest2);
+        }
+        System.out.println("Table test :");
+        for(String s : test.getReferencedTables()){
+            System.out.println("Table : "+s);
+        }
+        System.out.println("Table reftest1 :");
+        for(String s : reftest1.getReferencedTables()){
+            System.out.println("Table : "+s);
+        }
+        System.out.println("Table reftest2 :");
+        for(String s : reftest2.getReferencedTables()){
+            System.out.println("Table : "+s);
+        }
         m.store();
     }
 }
