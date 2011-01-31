@@ -22,7 +22,6 @@ THE SOFTWARE.
 package de.cockpit4.xmlmanipulator;
 
 import de.cockpit4.sdudaemon.tool.ToolHelper;
-import java.security.NoSuchAlgorithmException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.jdom.Document;
@@ -224,6 +223,7 @@ public final class XMLDatabaseTable {
                 xm.addXPathNode("/table/body/row[@id=\'" + id + "\']/column[@name=\'" + column.name + "\']", value);
             }
         }
+        //System.out.println("TABLE : "+xm);
     }
 
     /**This will insert a row into the XML database
@@ -442,13 +442,16 @@ public final class XMLDatabaseTable {
                 String[] data = new String[columns.size()];
 
                 int i = 0;
-
+                String checksum = "";
                 for (Object o : columns) {
                     columnNames[i] = getColumn(((Element) o).getAttributeValue("name"));
                     data[i] = ((Element) o).getText();
+                    checksum = ((Element) o).getParentElement().getAttributeValue("checksum");
                     i++;
                 }
-                return new XMLDataRow(id, columnNames, data);
+                XMLDataRow row = new XMLDataRow(id, columnNames, data);
+                row.checksum = checksum;
+                return row;
             }
         } catch (Exception ex) {
             Logger.getLogger("SystemLogger").log(Level.SEVERE, null, ex);
@@ -494,6 +497,25 @@ public final class XMLDatabaseTable {
             Logger.getLogger(XMLDatabaseTable.class.getName()).log(Level.SEVERE, null, ex);
         } catch (Exception ex) {
             Logger.getLogger(XMLDatabaseTable.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
+    }
+
+    /**Searches a table for a key in the specified column
+     * @param column to search
+     * @param term to match
+     * @return the first occured row, null if not found
+     * @throws JDOMException
+     */
+    public XMLDataRow selectRow(String column,String term) throws JDOMException{
+        List rows= XPath.selectNodes(getDocument(), "/table/body/row");
+        
+        for(Object row : rows){
+            int id = Integer.parseInt(((Element) row).getAttributeValue("id"));
+            Object col = XPath.selectSingleNode(getDocument(), "/table/body/row[@id=\'"+id+"\']/column[@name=\'"+column+"\']");
+            if(((Element)col).getValue().equals(term)){
+                return getRow(Integer.parseInt(((Element) row).getAttributeValue("id")));
+            }
         }
         return null;
     }
@@ -624,10 +646,6 @@ public final class XMLDatabaseTable {
                     }
                 }
             }
-
-
-
-            //columnSet[i] = new XMLDataColumn(cname, type);
             i++;
         }
 
@@ -674,38 +692,30 @@ public final class XMLDatabaseTable {
      */
     public String makeChecksum(XMLDataRow row) {
         XMLDataColumn[] indexColumns = getIndexColumns();
-//        for(XMLDataColumn t : indexColumns){
-//            System.out.println("checksum "+t);
-//        }
-        ToolHelper.quicksort(indexColumns, 0, indexColumns.length - 1);
 
+        ToolHelper.quicksort(indexColumns, 0, indexColumns.length - 1);
 
         String message = "";
         for (XMLDataColumn c : indexColumns) {
             message += row.getData(c);
+            //System.err.println("makeChecksum Index Column : "+c.name);
         }
-
-        byte[] b = ToolHelper.md5sum(message.getBytes());
-
-        return ToolHelper.bytesToHexString(b);
+        //System.err.println("makeChecksum encoding message : "+message);
+        //System.err.println("makeChecksum : "+ToolHelper.bytesToHexString(ToolHelper.md5sum(message.getBytes())));
+        return ToolHelper.bytesToHexString(ToolHelper.md5sum(message.getBytes()));
     }
 
     /**finalize document, add hashes to rows and the table head
      *this makes it easy to detect changes among the rows and makes it easy to update data where necessary.
      * 
      */
-    public void finalizeDocument() throws NoSuchFieldException { //TODO : make this deterministic
+    public void finalizeDocument() throws NoSuchFieldException {
         Document doc = xm.getDocument();
         try {
             String message = "";
 
-            List indexColumns = XPath.selectNodes(doc, "/table/head/column[@index]");
-
-            Element[] columns = new Element[indexColumns.size()];
-
-            for (int i = 0; i < indexColumns.size(); i++) {
-                columns[i] = (Element) XPath.selectSingleNode(doc, "/table/head/column[@index=\'" + i + "\']");
-            }
+            XMLDataColumn[] indexColumns = getIndexColumns();
+            
 
             List rowData = XPath.selectNodes(doc, "/table/body/row");
 
@@ -716,13 +726,14 @@ public final class XMLDatabaseTable {
                     XMLDataRow row = getRow(id);
 
 
-                    for (Element e : columns) {
-                        message += row.getData(e.getAttributeValue("name"));
+                    for (XMLDataColumn e : indexColumns) {
+                        message += row.getData(e.name);
+                        //System.err.println("Index Columns : "+e.name);
                     }
-                    //System.out.println("message " + message);
+                    //System.err.println("Finalize: encoding message " + message);
                     byte[] b = ToolHelper.md5sum(message.getBytes());
                     String checksum = ToolHelper.bytesToHexString(b);
-
+                    //System.err.println("checksum "+checksum);
                     ((Element) r).setAttribute("checksum", checksum);
                     message = "";
                     checksum = "";
@@ -783,9 +794,6 @@ public final class XMLDatabaseTable {
 
         if (out.exists() && out.isFile() && out.canRead()) {
             FileWriter fw = new FileWriter(out);
-
-
-
             fw.write(xm.toString());
             fw.close();
         } else {
@@ -853,7 +861,7 @@ public final class XMLDatabaseTable {
 
 
         XMLDataColumn[] cols = new XMLDataColumn[3];
-        cols[0] = new XMLDataColumn("name", "varchar(20)", "testtable", "testkey", 0);
+        cols[0] = new XMLDataColumn("name", "varchar(20)", 0);
         cols[1] = new XMLDataColumn("surname", "varchar(20)");
         cols[2] = new XMLDataColumn("adress", "varchar(100)");
 
@@ -887,11 +895,6 @@ public final class XMLDatabaseTable {
 
         System.out.println("Table : "+table);
 
-        for(XMLDataRow r : dataRows){
-            System.out.println("Data : "+r);
-        }
-
-        //System.out.println("Data : " + table.findRowByChecksum(table.makeChecksum(rows[2])));
-
+        System.out.println("SEARCH : "+table.selectRow("name", "test second"));
     }
 }

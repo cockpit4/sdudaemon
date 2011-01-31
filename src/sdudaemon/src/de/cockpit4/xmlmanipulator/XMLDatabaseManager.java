@@ -49,7 +49,7 @@ public class XMLDatabaseManager {
             if (tableDir.canRead()) {
                 if (tableDir.canWrite()) {
                     this.tablePath = tableDir.getAbsolutePath();
-                    //System.out.println("Table Path : " + tablePath);
+                    System.out.println("Table Path : " + tablePath);
 
                     File[] tablefiles = tableDir.listFiles(new FileFilter() {
 

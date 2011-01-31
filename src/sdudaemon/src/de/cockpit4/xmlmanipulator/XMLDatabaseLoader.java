@@ -116,25 +116,27 @@ public class XMLDatabaseLoader {
                 res = sql.executeQuery("SELECT COUNT(*) FROM pg_tables WHERE tablename=\'" + data.getTableName() + "\';");
                 res.next();
                 int result = res.getInt(1);
-                System.out.println("res : " + result);
-                res.close();
+                //System.out.println("res : " + result);
+                //res.close();
                 if (result == 0) { //table does not exist
                     String tableCreate = "CREATE TABLE " + data.getDatabaseName() + "." + data.getTableName() + " (\nid BIGINT,\nmd5 VARCHAR(32),\n";
                     for (XMLDataColumn col : cols) {
                         tableCreate += col.name + " " + col.type + ",\n";
                     }
                     tableCreate += " PRIMARY KEY(id));";
-                    System.out.println("Query : " + tableCreate);
+                    //System.out.println("Query : " + tableCreate);
                     sql.execute(tableCreate);
+                } else{
+
                 }
 
                 for(XMLDataRow t : rows){
-                    String selectRow = "SELECT COUNT(*) FROM "+data.getDatabaseName()+"."+data.getTableName()+" WHERE md5=\'"+t.checksum+"\';";
-                    System.out.println("Select Data Set : "+selectRow);
+                    String selectRow = "SELECT COUNT(*) FROM "+data.getDatabaseName()+"."+data.getTableName()+" WHERE id=\'"+t.id+"\';";
+                    //System.out.println("Select Data Set : "+selectRow);
                     res = sql.executeQuery(selectRow);
                     res.next();
                     result = res.getInt(1);
-                    res.close();
+
                     if(result == 0){ // dataset not avaliable create it
                         String columns = "id, md5, ";
                         String values  = t.id+", \'"+t.checksum+"\', ";
@@ -144,81 +146,26 @@ public class XMLDatabaseLoader {
                             values  += "\'"+t.values[i].replaceAll("\'", "")+"\'"+(i<(t.columnsNames.length -1) ? ", " : "");
                         }
                         String query = "INSERT INTO "+data.getDatabaseName()+"."+data.getTableName()+" ("+columns+") VALUES ("+values+");";
-
-                        System.out.println("INSERT Query : "+query);
                         sql.execute(query);
                     }
                     else{ // dataset present for now do nothing here ... later do updating
+                        String query = "UPDATE "+data.getDatabaseName()+"."+data.getTableName()+" SET md5=\'"+t.checksum+"\', ";
                         
+                        for(int i = 0; i< t.columnsNames.length; i++){
+                            query  += t.columnsNames[i].name+"=\'"+t.values[i].replaceAll("\'", "")+"\'"+(i<(t.columnsNames.length -1) ? ", " : "");
+                        }
+                        query+=" WHERE id="+t.id+";";
+                        //System.out.println("QUERY : "+query);
+                        sql.execute(query);
                     }
                 }
             }
         }
         close();
-        /*
-        Statement sql; //Statement
-        ResultSet res; //result of each SQL Statement
-
-        if(connect()){
-        //System.out.println("Connected!");
-        sql = dbConn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE);
-        //check if the table exists
-        res = sql.executeQuery("SELECT COUNT(*) FROM pg_tables WHERE tablename=\'"+data.getTableName()+"\';");
-        res.last();
-
-        if(res.getRow()<1){ //no table so create it.
-        //System.out.println("Table does not exist!");
-
-        String query = "CREATE TABLE "+data.getDatabaseName()+"."+data.getTableName()+" (id int,";
-        //System.out.println("Creating Table..."+query);
-        for(XMLDataColumn col : cols){
-        //System.out.println(" QUERY: "+query);
-
-        query += col.name+" "+col.type+", ";
-        }
-        query += "PRIMARY KEY(id));";
-
-        //System.out.println(" QUERY : "+query);
-        sql.execute(query);
-        }
-        else{ //Table drop it
-        //System.out.println("Table exists dropping it ...");
-        //TODO: (Blocker) make ID a serial stop dropping tables and check for existing values
-        sql.execute("DROP TABLE "+data.getDatabaseName()+"."+data.getTableName()+";");
-
-        String query = "CREATE TABLE "+data.getDatabaseName()+"."+data.getTableName()+" (id int,";
-        for(XMLDataColumn col : cols){
-        query += col.name+" "+col.type+", ";
-        }
-        query += "PRIMARY KEY(id));";
-
-        //System.out.println(" QUERY : "+query);
-
-        sql.execute(query);
-        }
-
-        for(XMLDataRow dat : data.getData()){ //insert all data
-        String columns = "id, ";
-        String values  = dat.id+", ";
-
-        for(int i = 0; i< dat.columnsNames.length; i++){
-        columns += dat.columnsNames[i].name+(i<(dat.columnsNames.length -1) ? ", " : "");
-        values  += "\'"+dat.values[i].replaceAll("\'", "")+"\'"+(i<(dat.columnsNames.length -1) ? ", " : "");
-        }
-
-        String query = "INSERT INTO "+data.getDatabaseName()+"."+data.getTableName()+" ("+columns+") VALUES ("+values+");";
-        //System.out.println("QUERY : "+query);
-        sql.execute(query);
-        }
-
-        close();
-        }*/
     }
 
     public static void main(String[] argV) throws JDOMException, IOException, SQLException {
         XMLDatabaseLoader xl = new XMLDatabaseLoader("localhost", "5432", "kneo", "praktikum", "pmw", "/home/kneo/Documents/cockpit4/Projects/Praktikum/XML-Tables");
-
-
         xl.connect();
         xl.load();
     }
